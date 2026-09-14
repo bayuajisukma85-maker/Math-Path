@@ -8,7 +8,7 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<boolean>;
   register: (fullName: string, email: string, pass: string, role: UserRole, grade?: string) => Promise<boolean>;
   logout: () => void;
-  switchUserRole: (role: UserRole) => void;
+  switchUserRole: (role: UserRole, specificUserId?: string) => void;
   authFetch: (url: string, options?: RequestInit) => Promise<Response>;
 }
 
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
-  const switchUserRole = (targetRole: UserRole) => {
+  const switchUserRole = (targetRole: UserRole, specificUserId?: string) => {
     if (targetRole === 'teacher') {
       setUser({
         id: 'user-teacher-1',
@@ -96,13 +96,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         role: 'admin'
       });
     } else {
-      setUser({
-        id: 'user-student-1',
-        email: 'budi@mathpath.id',
-        fullName: 'Budi Pratama',
-        role: 'student',
-        classGrade: 'Kelas 10 SMA'
-      });
+      if (specificUserId === 'user-student-2') {
+        setUser({
+          id: 'user-student-2',
+          email: 'siti@mathpath.id',
+          fullName: 'Siti Rahmawati',
+          role: 'student',
+          classGrade: 'Kelas 9 SMP',
+          hasCompletedDiagnostic: false
+        });
+      } else {
+        setUser({
+          id: 'user-student-1',
+          email: 'budi@mathpath.id',
+          fullName: 'Budi Pratama',
+          role: 'student',
+          classGrade: 'Kelas 10 SMA',
+          hasCompletedDiagnostic: true
+        });
+      }
     }
   };
 

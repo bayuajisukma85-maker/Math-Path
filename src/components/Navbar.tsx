@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('dashboard')}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('landing')}>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-sky-500 flex items-center justify-center text-white shadow-sm shadow-indigo-200">
               <span className="font-bold text-xl tracking-tight">Mπ</span>
             </div>
@@ -49,6 +49,18 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Navigation Links based on Role */}
           <nav className="hidden md:flex items-center gap-1">
+            <button
+              onClick={() => onNavigate('landing')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                currentView === 'landing'
+                  ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              Beranda
+            </button>
+
             {role === 'student' && (
               <>
                 <button
@@ -129,6 +141,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               </>
             )}
+
+            <button
+              onClick={() => onNavigate('profile')}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                currentView === 'profile'
+                  ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <UserCheck className="w-4 h-4" />
+              Profil
+            </button>
           </nav>
 
           {/* Right Actions: AI Tutor & Role Switcher */}
@@ -154,22 +178,41 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
 
               {showRoleMenu && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2">
-                  <div className="px-3 py-1.5 text-xs text-slate-400 font-semibold uppercase tracking-wider">
-                    Ganti Peran (Demo Mode)
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in slide-in-from-top-2">
+                  <div className="px-3 py-1.5 text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                    Ganti Peran / Akun Demo
                   </div>
                   <button
                     onClick={() => {
-                      switchUserRole('student');
+                      switchUserRole('student', 'user-student-1');
                       onNavigate('dashboard');
                       setShowRoleMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 ${
-                      role === 'student' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-700'
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                      user?.id === 'user-student-1' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-700'
                     }`}
                   >
-                    <span>Siswa: Budi Pratama</span>
-                    {role === 'student' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded">Aktif</span>}
+                    <div>
+                      <span className="block font-medium">Siswa 1: Budi Pratama</span>
+                      <span className="text-[10px] text-slate-400">Kelas 10 SMA • Progres Aktif</span>
+                    </div>
+                    {user?.id === 'user-student-1' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded font-bold">Aktif</span>}
+                  </button>
+                  <button
+                    onClick={() => {
+                      switchUserRole('student', 'user-student-2');
+                      onNavigate('dashboard');
+                      setShowRoleMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                      user?.id === 'user-student-2' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-700'
+                    }`}
+                  >
+                    <div>
+                      <span className="block font-medium">Siswa 2: Siti Rahmawati</span>
+                      <span className="text-[10px] text-slate-400">Kelas 9 SMP • Siap Diagnostik</span>
+                    </div>
+                    {user?.id === 'user-student-2' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded font-bold">Aktif</span>}
                   </button>
                   <button
                     onClick={() => {
@@ -177,12 +220,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onNavigate('teacher-dashboard');
                       setShowRoleMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 ${
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
                       role === 'teacher' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-700'
                     }`}
                   >
-                    <span>Guru: Ibu Dewi, S.Pd.</span>
-                    {role === 'teacher' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded">Aktif</span>}
+                    <div>
+                      <span className="block font-medium">Guru: Ibu Dewi, S.Pd.</span>
+                      <span className="text-[10px] text-slate-400">Monitoring Kelas & Asesmen AI</span>
+                    </div>
+                    {role === 'teacher' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded font-bold">Aktif</span>}
                   </button>
                   <button
                     onClick={() => {
@@ -190,13 +236,30 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onNavigate('admin-dashboard');
                       setShowRoleMenu(false);
                     }}
-                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 ${
+                    className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
                       role === 'admin' ? 'text-indigo-600 font-bold bg-indigo-50/50' : 'text-slate-700'
                     }`}
                   >
-                    <span>Administrator Kurikulum</span>
-                    {role === 'admin' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded">Aktif</span>}
+                    <div>
+                      <span className="block font-medium">Administrator Kurikulum</span>
+                      <span className="text-[10px] text-slate-400">Pengaturan KKM & Modul</span>
+                    </div>
+                    {role === 'admin' && <span className="text-[10px] bg-indigo-100 px-1.5 py-0.5 rounded font-bold">Aktif</span>}
                   </button>
+
+                  <div className="mt-2 pt-2 border-t border-slate-100 px-2">
+                    <button
+                      onClick={() => {
+                        logout();
+                        onNavigate('login');
+                        setShowRoleMenu(false);
+                      }}
+                      className="w-full text-left px-2.5 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-lg font-semibold flex items-center gap-1.5"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Keluar (Logout)</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

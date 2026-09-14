@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
+import { LandingView } from './views/LandingView';
+import { LoginView } from './views/LoginView';
+import { RegisterView } from './views/RegisterView';
+import { ForgotPasswordView } from './views/ForgotPasswordView';
+import { ProfileView } from './views/ProfileView';
 import { StudentDashboard } from './views/StudentDashboard';
 import { DiagnosticView } from './views/DiagnosticView';
 import { TopicDetailView } from './views/TopicDetailView';
@@ -11,8 +16,8 @@ import { AdminDashboard } from './views/AdminDashboard';
 import { AiTutorModal } from './components/AiTutorModal';
 
 function AppContent() {
-  const { role } = useAuth();
-  const [currentView, setCurrentView] = useState<string>('dashboard');
+  const { role, user } = useAuth();
+  const [currentView, setCurrentView] = useState<string>('landing');
   const [selectedTopicSlug, setSelectedTopicSlug] = useState<string>('fungsi-kuadrat');
   const [isAiTutorOpen, setIsAiTutorOpen] = useState<boolean>(false);
   const [activeTopicForAi, setActiveTopicForAi] = useState<string>('Fungsi Kuadrat');
@@ -43,6 +48,26 @@ function AppContent() {
 
       {/* Main App Body */}
       <main className="flex-1 pb-16">
+        {currentView === 'landing' && (
+          <LandingView onNavigate={handleNavigate} />
+        )}
+
+        {currentView === 'login' && (
+          <LoginView onNavigate={handleNavigate} />
+        )}
+
+        {currentView === 'register' && (
+          <RegisterView onNavigate={handleNavigate} />
+        )}
+
+        {currentView === 'forgot-password' && (
+          <ForgotPasswordView onNavigate={handleNavigate} />
+        )}
+
+        {currentView === 'profile' && (
+          <ProfileView onNavigate={handleNavigate} />
+        )}
+
         {currentView === 'dashboard' && (
           <StudentDashboard onNavigate={handleNavigate} />
         )}

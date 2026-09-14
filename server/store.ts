@@ -53,30 +53,34 @@ class DatabaseStore {
   public assessmentAttempts: AssessmentAttempt[] = [];
   public securityEvents: AssessmentSecurityEvent[] = [];
 
+  public resetTokens: Map<string, { email: string; expiresAt: number }> = new Map();
+
   constructor() {
     this.seedInitialUsers();
     this.seedDemoStudentProgress();
   }
 
   private seedInitialUsers() {
-    // Demo Student
+    // Demo Student (Has completed diagnostic, learning path active)
     this.users.set('user-student-1', {
       id: 'user-student-1',
       email: 'budi@mathpath.id',
       fullName: 'Budi Pratama',
       role: 'student',
       classGrade: 'Kelas 10 SMA',
-      passwordHash: 'password123'
+      passwordHash: 'password123',
+      hasCompletedDiagnostic: true
     });
 
-    // Demo Student 2
+    // Demo Student 2 (New student, ready for fresh diagnostic)
     this.users.set('user-student-2', {
       id: 'user-student-2',
       email: 'ani@mathpath.id',
       fullName: 'Siti Rahmawati',
       role: 'student',
       classGrade: 'Kelas 9 SMP',
-      passwordHash: 'password123'
+      passwordHash: 'password123',
+      hasCompletedDiagnostic: false
     });
 
     // Demo Teacher
@@ -86,7 +90,8 @@ class DatabaseStore {
       fullName: 'Ibu Dewi Safitri, S.Pd.',
       role: 'teacher',
       classGrade: 'Guru Matematika SMA & SMP',
-      passwordHash: 'password123'
+      passwordHash: 'password123',
+      hasCompletedDiagnostic: true
     });
 
     // Demo Admin
@@ -95,7 +100,8 @@ class DatabaseStore {
       email: 'admin@mathpath.id',
       fullName: 'Admin Kurikulum MathPath',
       role: 'admin',
-      passwordHash: 'admin123'
+      passwordHash: 'admin123',
+      hasCompletedDiagnostic: true
     });
   }
 
@@ -277,18 +283,23 @@ class DatabaseStore {
     });
   }
 
-  // Evaluate Diagnostic Assessment
+  // Evaluate Diagnostic Assessment (30 Questions across 10 Domains)
   public evaluateDiagnostic(userId: string, answers: AssessmentAnswerSubmission[]): DiagnosticResult {
     const diagnosticQuestions = this.questions.filter(q => q.topicId === 'diagnostic');
     let totalScore = 0;
-    let maxScore = diagnosticQuestions.length * 10;
+    const maxScore = (diagnosticQuestions.length || 30) * 10;
 
     const domains: Record<string, { total: number; correct: number }> = {
-      'Bilangan & Aritmatika Dasar': { total: 0, correct: 0 },
-      'Pecahan & Desimal': { total: 0, correct: 0 },
-      'Aljabar & Persamaan Linear': { total: 0, correct: 0 },
-      'Geometri & Pythagoras': { total: 0, correct: 0 },
-      'Persamaan & Fungsi Kuadrat': { total: 0, correct: 0 }
+      'Bilangan': { total: 0, correct: 0 },
+      'Operasi Hitung': { total: 0, correct: 0 },
+      'Pecahan': { total: 0, correct: 0 },
+      'Rasio & Perbandingan': { total: 0, correct: 0 },
+      'Bentuk Aljabar': { total: 0, correct: 0 },
+      'Persamaan Linear': { total: 0, correct: 0 },
+      'Geometri & Teorema Pythagoras': { total: 0, correct: 0 },
+      'Statistika': { total: 0, correct: 0 },
+      'Peluang': { total: 0, correct: 0 },
+      'Relasi & Fungsi': { total: 0, correct: 0 }
     };
 
     answers.forEach(ans => {
@@ -296,17 +307,27 @@ class DatabaseStore {
       if (!q) return;
 
       const tag = q.conceptTag || 'Lainnya';
-      let domainKey = 'Aljabar & Persamaan Linear';
-      if (tag.includes('Bilangan')) domainKey = 'Bilangan & Aritmatika Dasar';
-      else if (tag.includes('Pecahan')) domainKey = 'Pecahan & Desimal';
-      else if (tag.includes('Geometri') || tag.includes('Pythagoras')) domainKey = 'Geometri & Pythagoras';
-      else if (tag.includes('Kuadrat')) domainKey = 'Persamaan & Fungsi Kuadrat';
+      let domainKey = 'Bentuk Aljabar';
+      if (tag.includes('Bilangan')) domainKey = 'Bilangan';
+      else if (tag.includes('Operasi')) domainKey = 'Operasi Hitung';
+      else if (tag.includes('Pecahan')) domainKey = 'Pecahan';
+      else if (tag.includes('Rasio')) domainKey = 'Rasio & Perbandingan';
+      else if (tag.includes('Aljabar')) domainKey = 'Bentuk Aljabar';
+      else if (tag.includes('Persamaan Linear')) domainKey = 'Persamaan Linear';
+      else if (tag.includes('Geometri') || tag.includes('Pythagoras')) domainKey = 'Geometri & Teorema Pythagoras';
+      else if (tag.includes('Statistika')) domainKey = 'Statistika';
+      else if (tag.includes('Peluang')) domainKey = 'Peluang';
+      else if (tag.includes('Fungsi')) domainKey = 'Relasi & Fungsi';
 
-      domains[domainKey].total += 1;
+      if (domains[domainKey]) {
+        domains[domainKey].total += 1;
+      }
 
       if (ans.userAnswer === q.correctAnswer) {
         totalScore += q.points;
-        domains[domainKey].correct += 1;
+        if (domains[domainKey]) {
+          domains[domainKey].correct += 1;
+        }
       }
     });
 
@@ -318,20 +339,20 @@ class DatabaseStore {
       if (score < 60) status = 'Perlu Penguatan';
       else if (score >= 80) status = 'Mahir';
 
-      let details = `Tingkat penguasaan domain ${domain}: ${score}%.`;
-      if (score < 60) details += ' Memerlukan peninjauan konsep prasyarat fondasi.';
+      let details = `Penguasaan domain ${domain}: ${score}%.`;
+      if (score < 60) details += ' Disarankan penguatan konsep fondasi.';
       return { domain, score, status, details };
     });
 
     // Determine recommended Phase and Topic
     let recPhaseCode = 'FASE_D';
     let recTopicId = 'topic-bentuk-aljabar';
-    let summaryText = 'Berdasarkan asesmen diagnostik, kamu disarankan memulai dari Fase D (Bentuk Aljabar).';
+    let summaryText = 'Berdasarkan asesmen diagnostik, kamu disarankan memulai dari Fase D: Bentuk Aljabar & Operasi Dasar.';
 
     if (percent < 50) {
       recPhaseCode = 'FASE_B';
       recTopicId = 'topic-pecahan-senilai';
-      summaryText = 'Fondasi pecahan dan aritmatika dasar perlu diperkuat terlebih dahulu sebelum melangkah ke aljabar.';
+      summaryText = 'Fondasi pecahan dan aritmatika dasar perlu diperkuat terlebih dahulu sebelum melangkah ke aljabar dan fungsi.';
     } else if (percent < 75) {
       recPhaseCode = 'FASE_D';
       recTopicId = 'topic-bentuk-aljabar';
@@ -343,7 +364,7 @@ class DatabaseStore {
     }
 
     const recPhase = this.phases.find(p => p.code === recPhaseCode) || this.phases[3];
-    const recTopic = this.topics.find(t => t.id === recTopicId) || this.topics[2];
+    const recTopic = this.topics.find(t => t.id === recTopicId) || this.topics[7];
 
     const result: DiagnosticResult = {
       id: `diag-res-${Date.now()}`,
@@ -361,6 +382,12 @@ class DatabaseStore {
     };
 
     this.diagnosticResults.set(userId, result);
+
+    // Update user record: mark hasCompletedDiagnostic as true
+    const user = this.users.get(userId);
+    if (user) {
+      user.hasCompletedDiagnostic = true;
+    }
 
     // Unlock recommended topic in progress
     const progressMap = this.getOrCreateProgressMap(userId);

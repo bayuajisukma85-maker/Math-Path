@@ -47,7 +47,36 @@ export const TopicDetailView: React.FC<TopicDetailViewProps> = ({
 
   // Practice state
   const [practiceAnswers, setPracticeAnswers] = useState<Record<string, string>>({});
-  const [showPracticeFeedback, setShowPracticeFeedback] = useState<Record<string, boolean>>({});
+  const [practiceResults, setPracticeResults] = useState<Record<string, { isCorrect: boolean; explanation: string; correctAnswer: string }>>({});
+  const [isCheckingPractice, setIsCheckingPractice] = useState<Record<string, boolean>>({});
+
+  const handlePracticeSelect = async (questionId: string, answerId: string) => {
+    setPracticeAnswers(prev => ({ ...prev, [questionId]: answerId }));
+    setIsCheckingPractice(prev => ({ ...prev, [questionId]: true }));
+
+    try {
+      const res = await authFetch('/api/practice/check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questionId, userAnswer: answerId })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPracticeResults(prev => ({
+          ...prev,
+          [questionId]: {
+            isCorrect: data.isCorrect,
+            explanation: data.explanation,
+            correctAnswer: data.correctAnswer
+          }
+        }));
+      }
+    } catch (err) {
+      console.error('Practice check error:', err);
+    } finally {
+      setIsCheckingPractice(prev => ({ ...prev, [questionId]: false }));
+    }
+  };
 
   // Collapsed states for examples
   const [expandedExamples, setExpandedExamples] = useState<Record<string, boolean>>({ 'ex-fk-1': true, 'ex-pk-1': true });
@@ -293,15 +322,32 @@ export const TopicDetailView: React.FC<TopicDetailViewProps> = ({
             </p>
           </div>
 
-          {/* Call to Next Step */}
-          <div className="pt-4 flex justify-end">
-            <button
-              onClick={() => setActiveTab('CONTOH')}
-              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md transition-colors flex items-center gap-2"
-            >
-              <span>Lanjut ke Contoh Soal</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+          {/* Cek Pemahaman Konsep Section */}
+          <div className="bg-indigo-50/80 border border-indigo-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-indigo-950 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span>Sudah memahami konsep materi di atas?</span>
+              </h4>
+              <p className="text-xs text-indigo-800 leading-relaxed">
+                Pilih opsi di bawah untuk lanjut mendalami contoh soal bertahap atau berkonsultasi dengan MathPath AI Tutor jika membutuhkan penjelasan ulang.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+              <button
+                onClick={() => onOpenAiTutor(topic.title)}
+                className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+              >
+                <span>Masih Bingung / Tanya AI</span>
+              </button>
+              <button
+                onClick={() => setActiveTab('CONTOH')}
+                className="flex-1 sm:flex-none px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md shadow-indigo-200 transition-all flex items-center justify-center gap-1.5 hover:scale-102"
+              >
+                <span>Ya, Lanjut ke Contoh Soal</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -403,18 +449,28 @@ export const TopicDetailView: React.FC<TopicDetailViewProps> = ({
             <div className="space-y-8">
               {practiceQuestions.map((q, idx) => {
                 const selected = practiceAnswers[q.id];
-                const showFb = showPracticeFeedback[q.id];
+                const result = practiceResults[q.id];
+                const isChecking = isCheckingPractice[q.id];
 
                 return (
-                  <div key={q.id} className="border border-slate-200 rounded-2xl p-5 space-y-4 bg-slate-50/50">
+                  <div key={q.id} className="border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4 bg-slate-50/50">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-700">Latihan #{idx + 1}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-700">Latihan Soal #{idx + 1}</span>
+                        {result && (
+                          <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
+                            result.isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
+                          }`}>
+                            {result.isCorrect ? '✓ Benar' : '✕ Belum Tepat'}
+                          </span>
+                        )}
+                      </div>
                       <span className="px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold text-[11px]">
                         {q.difficulty}
                       </span>
                     </div>
 
-                    <p className="text-sm font-medium text-slate-800">{q.questionText}</p>
+                    <p className="text-sm font-semibold text-slate-800">{q.questionText}</p>
                     {q.mathExpression && (
                       <div className="p-3 bg-white rounded-xl border border-slate-200">
                         <MathRenderer math={q.mathExpression} block />
@@ -422,31 +478,67 @@ export const TopicDetailView: React.FC<TopicDetailViewProps> = ({
                     )}
 
                     <div className="space-y-2">
-                      {q.options?.map(opt => (
-                        <button
-                          key={opt.id}
-                          onClick={() => {
-                            setPracticeAnswers(prev => ({ ...prev, [q.id]: opt.id }));
-                            setShowPracticeFeedback(prev => ({ ...prev, [q.id]: true }));
-                          }}
-                          className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-center gap-3 ${
-                            selected === opt.id
-                              ? 'border-indigo-600 bg-indigo-50 text-indigo-950 font-bold'
-                              : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-xs">
-                            {opt.id}
-                          </span>
-                          <span>{opt.text}</span>
-                        </button>
-                      ))}
+                      {q.options?.map(opt => {
+                        const isChosen = selected === opt.id;
+                        let btnStyle = 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700';
+                        if (result) {
+                          if (opt.id === result.correctAnswer) {
+                            btnStyle = 'border-emerald-500 bg-emerald-50 text-emerald-950 font-bold';
+                          } else if (isChosen && !result.isCorrect) {
+                            btnStyle = 'border-rose-400 bg-rose-50 text-rose-950';
+                          }
+                        } else if (isChosen) {
+                          btnStyle = 'border-indigo-600 bg-indigo-50 text-indigo-950 font-bold';
+                        }
+
+                        return (
+                          <button
+                            key={opt.id}
+                            disabled={isChecking}
+                            onClick={() => handlePracticeSelect(q.id, opt.id)}
+                            className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm transition-all flex items-center justify-between gap-3 ${btnStyle}`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-xs shrink-0">
+                                {opt.id}
+                              </span>
+                              <span>{opt.text}</span>
+                            </div>
+                            {result && opt.id === result.correctAnswer && (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
-                    {showFb && (
-                      <div className="p-4 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs text-indigo-950">
-                        <span className="font-bold block mb-1">Pembahasan Konsep:</span>
-                        <p>{q.explanation}</p>
+                    {result && (
+                      <div className={`p-4 rounded-xl border text-xs sm:text-sm space-y-1.5 animate-in fade-in ${
+                        result.isCorrect ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950' : 'bg-amber-50/80 border-amber-200 text-amber-950'
+                      }`}>
+                        <div className="flex items-center justify-between font-bold">
+                          <span>{result.isCorrect ? 'Analisis Penyelesaian Tepat:' : 'Panduan Konsep:'}</span>
+                          {!result.isCorrect && (
+                            <button
+                              onClick={() => {
+                                setPracticeAnswers(prev => {
+                                  const copy = { ...prev };
+                                  delete copy[q.id];
+                                  return copy;
+                                });
+                                setPracticeResults(prev => {
+                                  const copy = { ...prev };
+                                  delete copy[q.id];
+                                  return copy;
+                                });
+                              }}
+                              className="text-[11px] text-amber-800 hover:text-amber-950 underline font-semibold"
+                            >
+                              Coba Lagi
+                            </button>
+                          )}
+                        </div>
+                        <p className="leading-relaxed">{result.explanation}</p>
                       </div>
                     )}
                   </div>

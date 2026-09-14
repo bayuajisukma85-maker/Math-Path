@@ -12,6 +12,7 @@ export interface UserProfile {
   role: UserRole;
   classGrade?: string;
   avatarUrl?: string;
+  hasCompletedDiagnostic?: boolean;
 }
 
 export type PhaseCode = 'FASE_A' | 'FASE_B' | 'FASE_C' | 'FASE_D' | 'FASE_E' | 'FASE_F';

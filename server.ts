@@ -62,12 +62,86 @@ async function startServer() {
       fullName,
       role: (role as any) || 'student',
       classGrade: classGrade || 'Fase D (SMP)',
-      passwordHash: password
+      passwordHash: password,
+      hasCompletedDiagnostic: false
     };
 
     db.users.set(newId, newUser);
     const { passwordHash: _, ...profile } = newUser;
     res.json({ user: profile, token: `tok_${newId}` });
+  });
+
+  app.post('/api/auth/forgot-password', (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Email wajib diisi.' });
+    }
+
+    let foundUser = null;
+    for (const user of db.users.values()) {
+      if (user.email.toLowerCase() === email.toLowerCase()) {
+        foundUser = user;
+        break;
+      }
+    }
+
+    if (!foundUser) {
+      // Return success message for privacy/security
+      return res.json({ message: 'Jika email terdaftar, instruksi reset kata sandi telah dikirimkan.' });
+    }
+
+    const resetToken = `rst_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    db.resetTokens.set(resetToken, {
+      email: foundUser.email,
+      expiresAt: Date.now() + 3600000 // 1 hour
+    });
+
+    res.json({ 
+      message: 'Instruksi reset kata sandi telah dibuat.',
+      resetToken, // Provided for convenience in prototype/demo testing
+      email: foundUser.email
+    });
+  });
+
+  app.post('/api/auth/reset-password', (req, res) => {
+    const { resetToken, newPassword } = req.body;
+    if (!resetToken || !newPassword) {
+      return res.status(400).json({ error: 'Token reset dan kata sandi baru wajib diisi.' });
+    }
+
+    const tokenData = db.resetTokens.get(resetToken);
+    if (!tokenData || tokenData.expiresAt < Date.now()) {
+      return res.status(400).json({ error: 'Token reset tidak valid atau sudah kedaluwarsa.' });
+    }
+
+    for (const user of db.users.values()) {
+      if (user.email.toLowerCase() === tokenData.email.toLowerCase()) {
+        user.passwordHash = newPassword;
+        db.resetTokens.delete(resetToken);
+        return res.json({ success: true, message: 'Kata sandi berhasil diperbarui. Silakan login kembali.' });
+      }
+    }
+
+    res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
+  });
+
+  app.put('/api/auth/profile', (req, res) => {
+    const userId = (req.headers['x-user-id'] as string) || 'user-student-1';
+    const { fullName, classGrade, newPassword } = req.body;
+
+    const user = db.users.get(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'Pengguna tidak ditemukan.' });
+    }
+
+    if (fullName) user.fullName = fullName;
+    if (classGrade) user.classGrade = classGrade;
+    if (newPassword && newPassword.length >= 6) {
+      user.passwordHash = newPassword;
+    }
+
+    const { passwordHash: _, ...profile } = user;
+    res.json({ user: profile, message: 'Profil berhasil diperbarui.' });
   });
 
   app.get('/api/auth/me', (req, res) => {
@@ -168,6 +242,26 @@ async function startServer() {
 
     const result = db.evaluateDiagnostic(userId, answers);
     res.json({ result });
+  });
+
+  // Practice checking endpoint
+  app.post('/api/practice/check', (req, res) => {
+    const { questionId, userAnswer } = req.body;
+    if (!questionId) {
+      return res.status(400).json({ error: 'ID soal wajib disertakan.' });
+    }
+
+    const question = db.questions.find(q => q.id === questionId);
+    if (!question) {
+      return res.status(404).json({ error: 'Soal tidak ditemukan.' });
+    }
+
+    const isCorrect = String(userAnswer).trim().toLowerCase() === String(question.correctAnswer).trim().toLowerCase();
+    res.json({
+      isCorrect,
+      correctAnswer: question.correctAnswer,
+      explanation: question.explanation
+    });
   });
 
   // ==========================================

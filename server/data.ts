@@ -1,93 +1,169 @@
 /**
  * MathPath Curriculum Data Store
  * Kurikulum Matematika Indonesia Fase A - Fase F
+ * 
+ * PEMBERITAHUAN SEED DATASET:
+ * "Konten ini merupakan konten awal/seed yang dapat dikembangkan dan disesuaikan dengan dokumen kurikulum sekolah."
  */
 
 import { Phase, Level, Topic, Subtopic, LearningMaterial, ExampleItem, Question, Assessment } from '../src/types';
+import { DIAGNOSTIC_QUESTIONS_30 } from './diagnosticData';
+
+export const CURRICULUM_SEED_DISCLAIMER = "Konten ini merupakan konten awal/seed yang dapat dikembangkan dan disesuaikan dengan dokumen kurikulum sekolah.";
 
 export const INITIAL_PHASES: Phase[] = [
   {
     id: 'phase-a',
     code: 'FASE_A',
     name: 'Fase A (Kelas 1 - 2 SD)',
-    description: 'Fondasi bilangan cacah, penjumlahan, pengurangan, dan pola gambar dasar.',
+    description: 'Fondasi bilangan cacah hingga 100, operasi penjumlahan & pengurangan sederhana, serta pengenalan bangun datar.',
     orderIndex: 1
   },
   {
     id: 'phase-b',
     code: 'FASE_B',
     name: 'Fase B (Kelas 3 - 4 SD)',
-    description: 'Perkalian, pembagian, konsep pecahan senilai, pengukuran panjang dan luas.',
+    description: 'Nilai tempat ribuan, perkalian, pembagian, konsep pecahan senilai, pengukuran panjang dan luas bidang datar.',
     orderIndex: 2
   },
   {
     id: 'phase-c',
     code: 'FASE_C',
     name: 'Fase C (Kelas 5 - 6 SD)',
-    description: 'Operasi hitung pecahan campuran, desimal, rasio, dan bangun ruang sederhana.',
+    description: 'Operasi pecahan campuran, desimal & persen, rasio perbandingan, geometri bangun ruang sederhana, dan pengolahan data.',
     orderIndex: 3
   },
   {
     id: 'phase-d',
     code: 'FASE_D',
     name: 'Fase D (Kelas 7 - 9 SMP)',
-    description: 'Bentuk aljabar, persamaan linear satu variabel, teorema Pythagoras, dan statistika dasar.',
+    description: 'Bentuk aljabar, persamaan linear satu variabel (PLSV), perbandingan, teorema Pythagoras, statistika data tunggal, dan peluang.',
     orderIndex: 4
   },
   {
     id: 'phase-e',
     code: 'FASE_E',
     name: 'Fase E (Kelas 10 SMA/SMK)',
-    description: 'Eksponen & logaritma, persamaan kuadrat, fungsi kuadrat, dan vektor dasar.',
+    description: 'Eksponen & logaritma, barisan dan deret, persamaan & fungsi kuadrat, serta trigonometri dasar segitiga siku-siku.',
     orderIndex: 5
   },
   {
     id: 'phase-f',
     code: 'FASE_F',
     name: 'Fase F (Kelas 11 - 12 SMA/SMK)',
-    description: 'Trigonometri analitik, limit fungsi, kalkulus turunan dan integral, statistika inferensial.',
+    description: 'Fungsi komposisi & invers, limit dan kalkulus turunan-integral aljabar, trigonometri analitik, dan statistika inferensial.',
     orderIndex: 6
   }
 ];
 
 export const INITIAL_LEVELS: Level[] = [
-  { id: 'level-a1', phaseId: 'phase-a', name: 'Level A1: Bilangan Cacah & Penjumlahan', gradeEquivalent: 'Kelas 1 SD', orderIndex: 1 },
-  { id: 'level-b1', phaseId: 'phase-b', name: 'Level B1: Pecahan Senilai & Perkalian', gradeEquivalent: 'Kelas 3-4 SD', orderIndex: 2 },
-  { id: 'level-c1', phaseId: 'phase-c', name: 'Level C1: Operasi Pecahan & Rasio', gradeEquivalent: 'Kelas 5-6 SD', orderIndex: 3 },
-  { id: 'level-d1', phaseId: 'phase-d', name: 'Level D1: Fondasi Bentuk Aljabar', gradeEquivalent: 'Kelas 7 SMP', orderIndex: 4 },
+  { id: 'level-a1', phaseId: 'phase-a', name: 'Level A1: Bilangan Cacah & Geometri Dasar', gradeEquivalent: 'Kelas 1-2 SD', orderIndex: 1 },
+  { id: 'level-b1', phaseId: 'phase-b', name: 'Level B1: Pecahan Senilai & Pengukuran', gradeEquivalent: 'Kelas 3-4 SD', orderIndex: 2 },
+  { id: 'level-c1', phaseId: 'phase-c', name: 'Level C1: Pecahan Campuran, Rasio & Data', gradeEquivalent: 'Kelas 5-6 SD', orderIndex: 3 },
+  { id: 'level-d1', phaseId: 'phase-d', name: 'Level D1: Fondasi Bilangan & Bentuk Aljabar', gradeEquivalent: 'Kelas 7 SMP', orderIndex: 4 },
   { id: 'level-d2', phaseId: 'phase-d', name: 'Level D2: Persamaan Linear Satu Variabel', gradeEquivalent: 'Kelas 7 SMP', orderIndex: 5 },
-  { id: 'level-d3', phaseId: 'phase-d', name: 'Level D3: Pemfaktoran Aljabar', gradeEquivalent: 'Kelas 8 SMP', orderIndex: 6 },
-  { id: 'level-d4', phaseId: 'phase-d', name: 'Level D4: Teorema Pythagoras & Geometri', gradeEquivalent: 'Kelas 8 SMP', orderIndex: 7 },
-  { id: 'level-e1', phaseId: 'phase-e', name: 'Level E1: Eksponen dan Logaritma', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 8 },
-  { id: 'level-e2', phaseId: 'phase-e', name: 'Level E2: Persamaan Kuadrat', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 9 },
-  { id: 'level-e3', phaseId: 'phase-e', name: 'Level E3: Fungsi Kuadrat & Grafiknya', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 10 },
-  { id: 'level-f1', phaseId: 'phase-f', name: 'Level F1: Turunan Fungsi Aljabar', gradeEquivalent: 'Kelas 11 SMA', orderIndex: 11 }
+  { id: 'level-d3', phaseId: 'phase-d', name: 'Level D3: Pemfaktoran Aljabar & Pola', gradeEquivalent: 'Kelas 8 SMP', orderIndex: 6 },
+  { id: 'level-d4', phaseId: 'phase-d', name: 'Level D4: Teorema Pythagoras & Statistika SMP', gradeEquivalent: 'Kelas 8 SMP', orderIndex: 7 },
+  { id: 'level-d5', phaseId: 'phase-d', name: 'Level D5: Peluang Kejadian Sederhana', gradeEquivalent: 'Kelas 9 SMP', orderIndex: 8 },
+  { id: 'level-e1', phaseId: 'phase-e', name: 'Level E1: Eksponen, Logaritma & Barisan', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 9 },
+  { id: 'level-e2', phaseId: 'phase-e', name: 'Level E2: Persamaan Kuadrat & Pemfaktoran', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 10 },
+  { id: 'level-e3', phaseId: 'phase-e', name: 'Level E3: Fungsi Kuadrat & Titik Ekstrem', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 11 },
+  { id: 'level-e4', phaseId: 'phase-e', name: 'Level E4: Trigonometri Dasar Segitiga', gradeEquivalent: 'Kelas 10 SMA', orderIndex: 12 },
+  { id: 'level-f1', phaseId: 'phase-f', name: 'Level F1: Fungsi Komposisi & Invers', gradeEquivalent: 'Kelas 11 SMA', orderIndex: 13 },
+  { id: 'level-f2', phaseId: 'phase-f', name: 'Level F2: Turunan & Kalkulus Dasar', gradeEquivalent: 'Kelas 11-12 SMA', orderIndex: 14 }
 ];
 
 export const INITIAL_TOPICS: Topic[] = [
+  // --- FASE A ---
   {
-    id: 'topic-pecahan-senilai',
-    levelId: 'level-b1',
-    phaseId: 'phase-b',
-    title: 'Pecahan Senilai',
-    slug: 'pecahan-senilai',
-    description: 'Memahami konsep pecahan senilai dengan visualisasi model konkret dan perkalian pembilang-penyebut.',
+    id: 'topic-fase-a-bilangan',
+    levelId: 'level-a1',
+    phaseId: 'phase-a',
+    title: 'Bilangan Cacah & Operasi Hitung Sederhana',
+    slug: 'bilangan-cacah-fase-a',
+    description: 'Mengenal lambang bilangan 1-100, nilai tempat puluhan & satuan, serta penjumlahan dan pengurangan dasar.',
     passingScore: 75,
-    estimatedMinutes: 30,
+    estimatedMinutes: 25,
     orderIndex: 1,
     prerequisiteIds: []
   },
   {
+    id: 'topic-fase-a-geometri',
+    levelId: 'level-a1',
+    phaseId: 'phase-a',
+    title: 'Geometri Dasar & Pola Bentuk',
+    slug: 'geometri-dasar-fase-a',
+    description: 'Mengenal segitiga, segi empat, lingkaran, serta pola pengubinan bentuk datar sederhana.',
+    passingScore: 75,
+    estimatedMinutes: 20,
+    orderIndex: 2,
+    prerequisiteIds: ['topic-fase-a-bilangan']
+  },
+
+  // --- FASE B ---
+  {
+    id: 'topic-pecahan-senilai',
+    levelId: 'level-b1',
+    phaseId: 'phase-b',
+    title: 'Pecahan Senilai & Operasi Sederhana',
+    slug: 'pecahan-senilai',
+    description: 'Memahami representasi pecahan dengan gambar model konkret, perkalian pembilang-penyebut, dan perbandingan pecahan.',
+    passingScore: 75,
+    estimatedMinutes: 30,
+    orderIndex: 3,
+    prerequisiteIds: ['topic-fase-a-bilangan']
+  },
+  {
+    id: 'topic-fase-b-pengukuran',
+    levelId: 'level-b1',
+    phaseId: 'phase-b',
+    title: 'Pengukuran Panjang, Luas & Keliling',
+    slug: 'pengukuran-panjang-luas-fase-b',
+    description: 'Mengukur satuan panjang standar (cm, m), menghitung keliling dan luas persegi serta persegi panjang.',
+    passingScore: 75,
+    estimatedMinutes: 30,
+    orderIndex: 4,
+    prerequisiteIds: ['topic-pecahan-senilai']
+  },
+
+  // --- FASE C ---
+  {
     id: 'topic-operasi-pecahan',
     levelId: 'level-c1',
     phaseId: 'phase-c',
-    title: 'Operasi Pecahan Campuran & Rasio',
-    slug: 'operasi-pecahan',
-    description: 'Menjumlahkan, mengurangkan, dan menyelesaikan permasalahan rasio pecahan.',
+    title: 'Operasi Pecahan Campuran, Desimal & Rasio',
+    slug: 'operasi-pecahan-desimal',
+    description: 'Menjumlahkan, mengurangkan, mengalikan pecahan campuran, desimal, persen, dan penerapan skala rasio.',
     passingScore: 75,
     estimatedMinutes: 40,
-    orderIndex: 2,
+    orderIndex: 5,
     prerequisiteIds: ['topic-pecahan-senilai']
+  },
+  {
+    id: 'topic-fase-c-data',
+    levelId: 'level-c1',
+    phaseId: 'phase-c',
+    title: 'Geometri Bangun Ruang & Pengolahan Data',
+    slug: 'bangun-ruang-data-fase-c',
+    description: 'Menghitung volume kubus dan balok serta membaca diagram batang dan tabel distribusi frekuensi sederhana.',
+    passingScore: 75,
+    estimatedMinutes: 35,
+    orderIndex: 6,
+    prerequisiteIds: ['topic-operasi-pecahan']
+  },
+
+  // --- FASE D (Prioritas Penuh: SMP) ---
+  {
+    id: 'topic-fase-d-bilangan',
+    levelId: 'level-d1',
+    phaseId: 'phase-d',
+    title: 'Bilangan Bulat & Rasional',
+    slug: 'bilangan-bulat-rasional',
+    description: 'Operasi hitung bilangan bulat positif-negatif, sifat komutatif-asosiatif-distributif, FPB dan KPK.',
+    passingScore: 75,
+    estimatedMinutes: 35,
+    orderIndex: 7,
+    prerequisiteIds: ['topic-operasi-pecahan']
   },
   {
     id: 'topic-bentuk-aljabar',
@@ -95,11 +171,11 @@ export const INITIAL_TOPICS: Topic[] = [
     phaseId: 'phase-d',
     title: 'Bentuk Aljabar & Operasi Dasar',
     slug: 'bentuk-aljabar',
-    description: 'Mengenal variabel, koefisien, konstanta, suku sejenis, serta penjumlahan & perkalian aljabar.',
+    description: 'Mengenal variabel, koefisien, konstanta, suku sejenis, serta penjumlahan, pengurangan, dan perkalian aljabar.',
     passingScore: 75,
     estimatedMinutes: 45,
-    orderIndex: 3,
-    prerequisiteIds: []
+    orderIndex: 8,
+    prerequisiteIds: ['topic-fase-d-bilangan']
   },
   {
     id: 'topic-plsv',
@@ -107,10 +183,10 @@ export const INITIAL_TOPICS: Topic[] = [
     phaseId: 'phase-d',
     title: 'Persamaan Linear Satu Variabel (PLSV)',
     slug: 'persamaan-linear-satu-variabel',
-    description: 'Menyelesaikan persamaan linear bentuk ax + b = c dengan sifat kesetaraan aljabar.',
+    description: 'Menyelesaikan persamaan linear bentuk ax + b = c dengan kesetaraan aljabar dan pemodelan cerita.',
     passingScore: 75,
     estimatedMinutes: 45,
-    orderIndex: 4,
+    orderIndex: 9,
     prerequisiteIds: ['topic-bentuk-aljabar']
   },
   {
@@ -119,23 +195,73 @@ export const INITIAL_TOPICS: Topic[] = [
     phaseId: 'phase-d',
     title: 'Pemfaktoran Aljabar',
     slug: 'pemfaktoran-aljabar',
-    description: 'Memfaktorkan suku aljabar persekutuan dan bentuk kuadrat ax² + bx + c serta selisih dua kuadrat.',
+    description: 'Memfaktorkan suku aljabar persekutuan (FPB), selisih dua kuadrat, dan bentuk kuadrat trinomial ax² + bx + c.',
     passingScore: 75,
     estimatedMinutes: 50,
-    orderIndex: 5,
+    orderIndex: 10,
     prerequisiteIds: ['topic-bentuk-aljabar']
   },
   {
     id: 'topic-pythagoras',
     levelId: 'level-d4',
     phaseId: 'phase-d',
-    title: 'Teorema Pythagoras',
+    title: 'Teorema Pythagoras & Geometri Segitiga',
     slug: 'teorema-pythagoras',
-    description: 'Hubungan kuadrat sisi miring segitiga siku-siku (a² + b² = c²) dan penerapannya dalam masalah kontekstual.',
+    description: 'Membuktikan dan menerapkan hubungan a² + b² = c² pada segitiga siku-siku serta tripel Pythagoras.',
+    passingScore: 75,
+    estimatedMinutes: 40,
+    orderIndex: 11,
+    prerequisiteIds: ['topic-bentuk-aljabar']
+  },
+  {
+    id: 'topic-fase-d-statistika',
+    levelId: 'level-d4',
+    phaseId: 'phase-d',
+    title: 'Statistika Dasar & Ukuran Pemusatan',
+    slug: 'statistika-dasar-fase-d',
+    description: 'Menghitung mean (rata-rata), median (nilai tengah), modus, dan jangkauan data tunggal.',
+    passingScore: 75,
+    estimatedMinutes: 40,
+    orderIndex: 12,
+    prerequisiteIds: ['topic-plsv']
+  },
+  {
+    id: 'topic-fase-d-peluang',
+    levelId: 'level-d5',
+    phaseId: 'phase-d',
+    title: 'Peluang Kejadian Tunggal',
+    slug: 'peluang-kejadian-fase-d',
+    description: 'Titik sampel, ruang sampel n(S), dan menghitung nilai peluang kejadian teoretik P(A) = n(A)/n(S).',
+    passingScore: 75,
+    estimatedMinutes: 35,
+    orderIndex: 13,
+    prerequisiteIds: ['topic-fase-d-statistika']
+  },
+
+  // --- FASE E (Prioritas Penuh: SMA Kelas 10) ---
+  {
+    id: 'topic-fase-e-eksponen',
+    levelId: 'level-e1',
+    phaseId: 'phase-e',
+    title: 'Eksponen & Bilangan Berpangkat',
+    slug: 'eksponen-bilangan-berpangkat',
+    description: 'Sifat-sifat eksponen bulat, bentuk akar, rasionalisasi penyebut, dan fungsi eksponensial.',
     passingScore: 75,
     estimatedMinutes: 45,
-    orderIndex: 6,
-    prerequisiteIds: []
+    orderIndex: 14,
+    prerequisiteIds: ['topic-pemfaktoran']
+  },
+  {
+    id: 'topic-fase-e-logaritma',
+    levelId: 'level-e1',
+    phaseId: 'phase-e',
+    title: 'Logaritma & Sifat-Sifatnya',
+    slug: 'logaritma-sifat-operasi',
+    description: 'Definisi logaritma sebagai invers eksponen, basis 10 dan basis e, serta sifat penjumlahan dan pengurangan logaritma.',
+    passingScore: 75,
+    estimatedMinutes: 45,
+    orderIndex: 15,
+    prerequisiteIds: ['topic-fase-e-eksponen']
   },
   {
     id: 'topic-persamaan-kuadrat',
@@ -143,10 +269,10 @@ export const INITIAL_TOPICS: Topic[] = [
     phaseId: 'phase-e',
     title: 'Persamaan Kuadrat',
     slug: 'persamaan-kuadrat',
-    description: 'Menentukan akar-akar persamaan kuadrat dengan pemfaktoran, melengkapkan kuadrat sempurna, dan rumus kuadratik abc.',
+    description: 'Menentukan akar-akar persamaan kuadrat dengan pemfaktoran, melengkapkan kuadrat, dan rumus kuadratik abc.',
     passingScore: 75,
     estimatedMinutes: 50,
-    orderIndex: 7,
+    orderIndex: 16,
     prerequisiteIds: ['topic-pemfaktoran']
   },
   {
@@ -155,379 +281,594 @@ export const INITIAL_TOPICS: Topic[] = [
     phaseId: 'phase-e',
     title: 'Fungsi Kuadrat & Titik Ekstrem',
     slug: 'fungsi-kuadrat',
-    description: 'Menganalisis parabola, titik puncak (-b/2a, -D/4a), sumbu simetri, diskriminan, dan nilai maksimum/minimum.',
+    description: 'Menganalisis parabola f(x) = ax² + bx + c, sumbu simetri x = -b/2a, diskriminan D = b² - 4ac, dan titik puncak ekstrem.',
     passingScore: 75,
     estimatedMinutes: 55,
-    orderIndex: 8,
+    orderIndex: 17,
     prerequisiteIds: ['topic-persamaan-kuadrat']
   },
   {
-    id: 'topic-turunan',
+    id: 'topic-fase-e-trigonometri',
+    levelId: 'level-e4',
+    phaseId: 'phase-e',
+    title: 'Trigonometri Dasar Segitiga Siku-Siku',
+    slug: 'trigonometri-dasar-fase-e',
+    description: 'Perbandingan sinus, kosinus, tangen (demi, sami, desa) pada segitiga siku-siku dan sudut istimewa.',
+    passingScore: 75,
+    estimatedMinutes: 50,
+    orderIndex: 18,
+    prerequisiteIds: ['topic-pythagoras']
+  },
+
+  // --- FASE F (SMA Kelas 11 - 12 Lanjut) ---
+  {
+    id: 'topic-fase-f-fungsi',
     levelId: 'level-f1',
     phaseId: 'phase-f',
-    title: 'Turunan Fungsi Aljabar',
+    title: 'Fungsi Komposisi & Fungsi Invers',
+    slug: 'fungsi-komposisi-invers',
+    description: 'Operasi (f ∘ g)(x), domain dan range, serta menentukan fungsi invers f⁻¹(x) secara analitik.',
+    passingScore: 75,
+    estimatedMinutes: 55,
+    orderIndex: 19,
+    prerequisiteIds: ['topic-fungsi-kuadrat']
+  },
+  {
+    id: 'topic-turunan',
+    levelId: 'level-f2',
+    phaseId: 'phase-f',
+    title: 'Limit & Turunan Fungsi Aljabar',
     slug: 'turunan-fungsi-aljabar',
-    description: 'Konsep limit laju perubahan f\'(x), aturan pangkat turunan, gradien garis singgung, dan aplikasi titik stasioner.',
+    description: 'Konsep limit laju perubahan f\'(x), aturan turunan pangkat, garis singgung kurva, dan uji titik stasioner.',
     passingScore: 75,
     estimatedMinutes: 60,
-    orderIndex: 9,
+    orderIndex: 20,
     prerequisiteIds: ['topic-fungsi-kuadrat']
   }
 ];
 
 export const INITIAL_SUBTOPICS: Subtopic[] = [
-  { id: 'sub-1', topicId: 'topic-bentuk-aljabar', title: 'Unsur-Unsur Bentuk Aljabar', description: 'Variabel, koefisien, konstanta, derajat aljabar', orderIndex: 1 },
-  { id: 'sub-2', topicId: 'topic-bentuk-aljabar', title: 'Suku Sejenis & Penjumlahan', description: 'Menyederhanakan suku sejenis', orderIndex: 2 },
-  { id: 'sub-3', topicId: 'topic-bentuk-aljabar', title: 'Perkalian Suku Tunggal & Distribusi', description: 'Sifat distributif a(b + c)', orderIndex: 3 },
-  { id: 'sub-4', topicId: 'topic-pemfaktoran', title: 'Faktor Persekutuan Terbesar (FPB)', description: 'Mengeluarkan faktor yang sama ab + ac = a(b + c)', orderIndex: 1 },
-  { id: 'sub-5', topicId: 'topic-pemfaktoran', title: 'Selisih Dua Kuadrat', description: 'Bentuk a² - b² = (a + b)(a - b)', orderIndex: 2 },
-  { id: 'sub-6', topicId: 'topic-pemfaktoran', title: 'Pemfaktoran x² + bx + c', description: 'Mencari pasangan bilangan p + q = b dan p × q = c', orderIndex: 3 },
-  { id: 'sub-7', topicId: 'topic-persamaan-kuadrat', title: 'Bentuk Umum Persamaan Kuadrat', description: 'ax² + bx + c = 0 dengan a ≠ 0', orderIndex: 1 },
-  { id: 'sub-8', topicId: 'topic-persamaan-kuadrat', title: 'Metode Pemfaktoran', description: 'Menemukan akar x₁ dan x₂', orderIndex: 2 },
-  { id: 'sub-9', topicId: 'topic-persamaan-kuadrat', title: 'Rumus Kuadratik (Rumus abc)', description: 'x = (-b ± √(b² - 4ac)) / (2a)', orderIndex: 3 },
-  { id: 'sub-10', topicId: 'topic-fungsi-kuadrat', title: 'Karakteristik Parabola & Diskriminan', description: 'Arah bukaan a > 0 atau a < 0 dan diskriminan D', orderIndex: 1 },
-  { id: 'sub-11', topicId: 'topic-fungsi-kuadrat', title: 'Sumbu Simetri dan Titik Puncak', description: 'Koordinat puncak (x_p, y_p) = (-b/2a, -D/4a)', orderIndex: 2 }
+  { id: 'sub-ba-1', topicId: 'topic-bentuk-aljabar', title: 'Unsur Bentuk Aljabar (Koefisien, Variabel, Konstanta)', description: 'Mengenal dan membedakan komponen 3x + 5', orderIndex: 1 },
+  { id: 'sub-ba-2', topicId: 'topic-bentuk-aljabar', title: 'Suku Sejenis & Operasi Penjumlahan/Pengurangan', description: 'Aturan menggabungkan suku dengan variabel dan pangkat sama', orderIndex: 2 },
+  { id: 'sub-ba-3', topicId: 'topic-bentuk-aljabar', title: 'Perkalian Bentuk Aljabar & Sifat Distributif', description: 'Perkalian suku tunggal dan suku dua (binomial)', orderIndex: 3 },
+  { id: 'sub-pf-1', topicId: 'topic-pemfaktoran', title: 'Faktor Persekutuan Terbesar (FPB)', description: 'Mengeluarkan faktor persekutuan ab + ac = a(b + c)', orderIndex: 1 },
+  { id: 'sub-pf-2', topicId: 'topic-pemfaktoran', title: 'Selisih Dua Kuadrat', description: 'Bentuk khusus a² - b² = (a + b)(a - b)', orderIndex: 2 },
+  { id: 'sub-pf-3', topicId: 'topic-pemfaktoran', title: 'Pemfaktoran Trinomial Kuadrat ax² + bx + c', description: 'Mencari pasangan bilangan p dan q', orderIndex: 3 },
+  { id: 'sub-pk-1', topicId: 'topic-persamaan-kuadrat', title: 'Bentuk Baku & Akar Persamaan Kuadrat', description: 'Bentuk ax² + bx + c = 0', orderIndex: 1 },
+  { id: 'sub-pk-2', topicId: 'topic-persamaan-kuadrat', title: 'Penyelesaian dengan Rumus abc Kuadratik', description: 'x = (-b ± √D) / 2a', orderIndex: 2 },
+  { id: 'sub-fk-1', topicId: 'topic-fungsi-kuadrat', title: 'Bentuk Grafik Parabola & Diskriminan D', description: 'Arah buka kurva dan pemotongan sumbu X', orderIndex: 1 },
+  { id: 'sub-fk-2', topicId: 'topic-fungsi-kuadrat', title: 'Sumbu Simetri dan Titik Balik Puncak Ekstrem', description: 'Rumus x_p = -b/(2a) dan y_p = -D/(4a)', orderIndex: 2 }
 ];
 
 export const INITIAL_MATERIALS: Record<string, LearningMaterial> = {
-  'topic-fungsi-kuadrat': {
-    id: 'mat-fk',
-    topicId: 'topic-fungsi-kuadrat',
-    title: 'Fungsi Kuadrat, Parabola, & Titik Ekstrem',
-    learningObjectives: [
-      'Menentukan karakteristik grafik fungsi kuadrat berdasarkan tanda koefisien a dan diskriminan D.',
-      'Menghitung koordinat sumbu simetri dan titik balik puncak (maksimum/minimum) secara matematis.',
-      'Menyelesaikan permasalahan kontekstual lintasan proyektil atau keuntungan maksimum menggunakan nilai ekstrem fungsi kuadrat.'
-    ],
-    apperception: 'Pernahkah kamu memperhatikan lintasan bola basket yang dilempar menuju ring, atau semprotan air mancur taman? Lintasan lengkung mulus tersebut mengikuti kurva parabola matematika yang dimodelkan oleh Fungsi Kuadrat. Melalui materi ini, kita dapat memprediksi ketinggian puncak tertinggi dan waktu jatuhnya secara presisi!',
-    basicConcepts: 'Fungsi kuadrat adalah fungsi polinomial berderajat dua dengan bentuk umum:\n\nf(x) = ax^2 + bx + c \\quad (a \\neq 0)\n\nGrafik fungsi kuadrat berbentuk parabola simetris vertikal. Nilai a menentukan arah kurva terbuka (ke atas jika a > 0, ke bawah jika a < 0), sedangkan konstanta c menunjukkan titik potong grafik terhadap sumbu Y pada (0, c).',
-    detailedExplanation: '1. Titik Puncak (Titik Balik Ekstrem)\nTitik puncak parabola terjadi saat gradien perubahan fungsi bernilai nol. Koordinat titik puncak P(x_p, y_p) dapat dihitung dengan rumus:\n\nx_p = -\\frac{b}{2a}\n\ny_p = -\\frac{D}{4a} = f(x_p)\n\ndi mana diskriminan D didefinisikan sebagai D = b^2 - 4ac.\n\n2. Sumbu Simetri\nGaris tegak lurus sumbu X yang membagi parabola menjadi dua sisi simetris adalah garis x = -b/(2a).\n\n3. Peran Nilai Diskriminan (D)\n- Jika D > 0: grafik memotong sumbu X di 2 titik berlainan.\n- Jika D = 0: grafik menyinggung sumbu X di 1 titik puncak.\n- Jika D < 0: grafik tidak pernah memotong sumbu X (definit positif jika a > 0, atau definit negatif jika a < 0).',
-    commonMisconceptions: '❌ Kesalahan Umum: Siswa sering lupa tanda negatif pada sumbu simetri x_p = -b/(2a), sehingga menghasilkan x_p yang berlawanan tanda.\n❌ Kesalahan Umum: Menganggap nilai minimum selalu nol. Nilai minimum parabola terbuka ke atas adalah nilai y_p = -D/(4a), yang bisa bernilai negatif, nol, atau positif.',
-    summary: 'Fungsi kuadrat f(x) = ax² + bx + c memiliki grafik parabola dengan titik puncak (-b/2a, -D/4a). Jika a > 0 parabola memiliki nilai minimum (terbuka ke atas), dan jika a < 0 parabola memiliki nilai maksimum (terbuka ke bawah).'
-  },
-  'topic-persamaan-kuadrat': {
-    id: 'mat-pk',
-    topicId: 'topic-persamaan-kuadrat',
-    title: 'Persamaan Kuadrat & Penyelesaian Akarnya',
-    learningObjectives: [
-      'Menyatakan bentuk baku persamaan kuadrat ax² + bx + c = 0.',
-      'Menemukan himpunan penyelesaian menggunakan metode pemfaktoran dan rumus kuadratik abc.',
-      'Menganalisis jenis akar menggunakan nilai diskriminan D.'
-    ],
-    apperception: 'Ketika merancang luas tanah persegi panjang di mana panjangnya 4 meter lebih dari lebarnya, persamaan luas akan menghasilkan variabel berpangkat dua: L = p × l = (l + 4) × l = l² + 4l. Untuk menemukan ukuran sebenarnya, kita memerlukan teknik persamaan kuadrat!',
-    basicConcepts: 'Bentuk umum persamaan kuadrat adalah:\n\nax^2 + bx + c = 0 \\quad (a \\neq 0)\n\nAkar-akar persamaan kuadrat adalah nilai pengganti x yang membuat ruas kiri sama dengan nol.',
-    detailedExplanation: 'Metode 1: Pemfaktoran\nJika ax² + bx + c dapat dinyatakan dalam bentuk (x - x₁)(x - x₂) = 0, maka akar-akarnya adalah x = x₁ atau x = x₂.\n\nMetode 2: Rumus Kuadratik (Rumus abc)\nUntuk persamaan kuadrat sembarang, rumus penyelesaiannya adalah:\n\nx_{1,2} = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\n\nDi mana D = b² - 4ac adalah diskriminan yang menentukan jenis akar:\n- D > 0: Dua akar real berbeda\n- D = 0: Dua akar real kembar\n- D < 0: Tidak memiliki akar real (akar imajiner).',
-    commonMisconceptions: '❌ Kesalahan Umum: Membagi kedua ruas dengan x pada persamaan seperti x² = 6x, sehingga kehilangan akar x = 0!\nBentuk yang benar: x² - 6x = 0 → x(x - 6) = 0 → x = 0 atau x = 6.',
-    summary: 'Persamaan kuadrat ax² + bx + c = 0 diselesaikan dengan pemfaktoran atau rumus abc: x = (-b ± √(b² - 4ac)) / 2a. Diskriminan D = b² - 4ac menentukan banyaknya akar real.'
-  },
-  'topic-pemfaktoran': {
-    id: 'mat-pf',
-    topicId: 'topic-pemfaktoran',
-    title: 'Pemfaktoran Bentuk Aljabar',
-    learningObjectives: [
-      'Menentukan faktor persekutuan aljabar menggunakan sifat distributif.',
-      'Memfaktorkan bentuk selisih dua kuadrat a² - b² = (a + b)(a - b).',
-      'Memfaktorkan bentuk kuadrat x² + bx + c menjadi (x + p)(x + q).'
-    ],
-    apperception: 'Bayangkan kamu memiliki ubin berbentuk persegi besar dengan luas x² dan ubin persegi panjang dengan luas 5x. Jika digabungkan, total luasnya x² + 5x. Dengan menarik faktor yang sama, kita tahu ukuran panjang dan lebarnya adalah x(x + 5). Inilah esensi pemfaktoran!',
-    basicConcepts: 'Pemfaktoran adalah proses menuliskan suatu bentuk aljabar sebagai hasil kali dari faktor-faktornya. Ini merupakan kebalikan dari operasi perkalian suku aljabar.',
-    detailedExplanation: '1. Sifat Distributif (Faktor Persekutuan)\nab + ac = a(b + c)\nContoh: 6x² + 9x = 3x(2x + 3)\n\n2. Selisih Dua Kuadrat\na^2 - b^2 = (a + b)(a - b)\nContoh: x² - 16 = (x + 4)(x - 4)\n\n3. Bentuk Kuadrat x² + bx + c\nCarilah dua bilangan bulat p dan q sedemikian sehingga:\np + q = b \\quad \\text{dan} \\quad p \\times q = c\nMaka:\nx^2 + bx + c = (x + p)(x + q)',
-    commonMisconceptions: '❌ Kesalahan: Menuliskan x² + 9 = (x + 3)(x - 3). Yang benar adalah selisih dua kuadrat (tanda minus): x² - 9 = (x + 3)(x - 3), bukan penjumlahan kuadrat!',
-    summary: 'Pemfaktoran memecah bentuk polinomial ke bentuk perkalian faktor: faktor persekutuan, selisih dua kuadrat a² - b² = (a+b)(a-b), dan faktorisasi kuadrat (x+p)(x+q).'
-  },
   'topic-bentuk-aljabar': {
     id: 'mat-ba',
     topicId: 'topic-bentuk-aljabar',
-    title: 'Fondasi Bentuk Aljabar & Operasi Dasar',
+    title: 'Bentuk Aljabar, Unsur-Unsur & Operasi Dasar',
     learningObjectives: [
-      'Mengidentifikasi variabel, koefisien, konstanta, dan suku sejenis.',
-      'Melakukan operasi penjumlahan dan pengurangan suku-suku sejenis.',
-      'Menerapkan sifat distributif perkalian aljabar.'
+      '1. Mengidentifikasi suku-suku dalam suatu bentuk aljabar.',
+      '2. Menentukan koefisien dari suatu variabel dengan memperhatikan tandanya.',
+      '3. Menentukan konstanta dalam bentuk aljabar.',
+      '4. Mengidentifikasi pasangan suku sejenis dan suku tidak sejenis.',
+      '5. Melakukan operasi penjumlahan pada bentuk aljabar dengan benar.',
+      '6. Melakukan operasi pengurangan bentuk aljabar dengan cermat.',
+      '7. Melakukan perkalian suku aljabar menggunakan sifat distributif.'
     ],
-    apperception: 'Jika kamu membeli 3 buku tulis dan 2 pensil, lalu temanmu membeli 2 buku tulis dan 1 pensil, bagaimana kamu menghitung total belanjaan tanpa harus mencampurkan buku dan pensil? Dalam matematika, kita memodelkannya dengan variabel: 3b + 2p + 2b + p = 5b + 3p!',
-    basicConcepts: 'Variabel adalah lambang pengganti bilangan yang belum diketahui nilainya (misal x, y). Koefisien adalah angka pengali variabel (pada 5x, koefisiennya 5). Konstanta adalah bilangan tetap tanpa variabel. Suku sejenis adalah suku-suku yang variabel dan pangkatnya sama.',
-    detailedExplanation: 'Operasi Penjumlahan & Pengurangan:\nHanya suku-suku sejenis yang dapat dijumlahkan atau dikurangkan koefisiennya:\n3x + 5x = (3 + 5)x = 8x\n4x^2 + 2x \\quad \\text{(tidak dapat disederhanakan karena pangkat x berbeda!)}\n\nOperasi Perkalian:\na(bx + c) = abx + ac\n(x + a)(x + b) = x^2 + (a + b)x + ab',
-    commonMisconceptions: '❌ Menjumlahkan suku yang tidak sejenis: 2x + 3 = 5x (Salah! 2x dan 3 adalah suku tidak sejenis, tidak bisa disatukan menjadi 5x).',
-    summary: 'Bentuk aljabar menyederhanakan suku sejenis dengan menjumlahkan/mengurangkan koefisiennya, dan menggunakan sifat distributif untuk perkalian suku aljabar.'
+    apperception: 'Pernahkah kamu berbelanja di minimarket dan membeli 3 bungkus roti dan 2 kotak susu? Jika harga roti dimisalkan x dan harga susu dimisalkan y, maka total belanjaanmu dapat dituliskan secara ringkas sebagai 3x + 2y. Bentuk seperti inilah yang disebut bentuk aljabar! Aljabar adalah bahasa matematika universal untuk memodelkan kuantitas yang belum diketahui nilainya.',
+    basicConcepts: `Pengertian Bentuk Aljabar:
+Bentuk aljabar adalah gabungan antara angka (bilangan) dan huruf (variabel) yang dihubungkan dengan tanda operasi hitung (+, -, ×, :).
+
+Perhatikan contoh bentuk aljabar berikut:
+3x + 5
+
+Unsur-unsurnya adalah:
+1. 3 disebut KOEFISIEN (faktor pengali di depan variabel).
+2. x disebut VARIABEL (huruf lambang pengganti nilai yang belum pasti).
+3. 5 disebut KONSTANTA (bilangan tetap yang berdiri sendiri tanpa variabel).
+4. 3x dan 5 disebut SUKU-SUKU aljabar.
+
+Konsep Suku Sejenis:
+Dua suku dikatakan SEJENIS jika memiliki variabel yang sama DAN pangkat variabel yang sama persis.
+Contoh suku sejenis:
+- 3x dan 5x (sejenis, variabelnya sama-sama x)
+- 4a² dan -7a² (sejenis, variabelnya sama-sama a²)
+
+Contoh suku TIDAK sejenis:
+- 3x dan 5y (variabel berbeda: x dan y)
+- 2x dan 2x² (pangkat berbeda: x pangkat 1 dan x pangkat 2)`,
+    detailedExplanation: `Aturan Operasi Bentuk Aljabar:
+
+1. Penjumlahan & Pengurangan:
+HANYA suku-suku yang sejenis yang boleh dijumlahkan atau dikurangkan koefisiennya!
+Contoh bertingkat:
+Contoh 1:
+3x + 5x = (3 + 5)x = 8x
+
+Contoh 2:
+(2x + 3) + (4x - 1)
+= 2x + 4x + 3 - 1
+= 6x + 2
+
+Contoh 3:
+(5a - 2b) - (3a - 7b)
+= 5a - 2b - 3a + 7b (ingat: tanda minus didistribusikan!)
+= (5a - 3a) + (-2b + 7b)
+= 2a + 5b
+
+2. Perkalian Aljabar (Sifat Distributif):
+Kalikan pengali di luar kurung ke setiap suku di dalam tanda kurung!
+Contoh:
+2(x + 3) = 2(x) + 2(3) = 2x + 6
+
+Perkalian dua suku dua (FOIL: First, Outer, Inner, Last):
+(x + 2)(x + 4) = x(x) + x(4) + 2(x) + 2(4)
+= x² + 4x + 2x + 8
+= x² + 6x + 8`,
+    commonMisconceptions: `⚠️ KESALAHAN UMUM YANG SERING DILAKUKAN SISWA:
+1. Menjumlahkan suku yang tidak sejenis:
+SALAH: 3x + 5 = 8x ❌ (Fatal! Suku bervariabel tidak boleh dijumlahkan dengan konstanta).
+BENAR: 3x + 5 tetap 3x + 5 ✅.
+
+2. Lupa mendistribusikan tanda negatif pada pengurangan kurung:
+SALAH: -(2x - 7) = -2x - 7 ❌
+BENAR: -(2x - 7) = -2x + 7 ✅ (Minus bertemu minus menjadi plus).
+
+3. Mengalikan koefisien tanpa mengalikan variabel:
+SALAH: 2x × 3x = 6x ❌
+BENAR: 2x × 3x = 6x² ✅ (x dikali x menjadi x²).`,
+    summary: 'Bentuk aljabar terdiri atas koefisien, variabel, dan konstanta. Operasi tambah dan kurang hanya berlaku untuk suku-suku sejenis. Pada perkalian aljabar, terapkan sifat distributif dan aturan pangkat aljabar.'
   },
-  'topic-plsv': {
-    id: 'mat-plsv',
-    topicId: 'topic-plsv',
-    title: 'Persamaan Linear Satu Variabel (PLSV)',
+
+  'topic-fungsi-kuadrat': {
+    id: 'mat-fk',
+    topicId: 'topic-fungsi-kuadrat',
+    title: 'Fungsi Kuadrat, Parabola, & Titik Balik Ekstrem',
     learningObjectives: [
-      'Mengenal bentuk umum persamaan linear satu variabel ax + b = c.',
-      'Menyelesaikan persamaan menggunakan operasi setara pada kedua ruas.',
-      'Menyelesaikan soal cerita kontekstual dengan pemodelan PLSV.'
+      '1. Menentukan karakteristik bentuk kurva parabola berdasarkan tanda koefisien a dan nilai diskriminan D.',
+      '2. Menghitung persamaan sumbu simetri vertikal secara eksak.',
+      '3. Menghitung koordinat titik puncak (maksimum/minimum) f(x_p) atau rumus puncak.',
+      '4. Menyelesaikan permasalahan kontekstual proyektil dan optimasi keuntungan maksimum.'
     ],
-    apperception: 'Timbangan dua lengan yang seimbang adalah gambaran sempurna dari persamaan aljabar. Jika kamu mengambil beban yang sama dari kedua piringan, timbangan akan tetap seimbang!',
-    basicConcepts: 'Bentuk umum PLSV adalah ax + b = c (dengan a ≠ 0). Prinsip kesetaraan: apa pun operasi aritmatika (tambah, kurang, kali, bagi bukan nol) yang dilakukan di ruas kiri harus dilakukan pula di ruas kanan.',
-    detailedExplanation: 'Contoh Penyelesaian:\n3x + 7 = 22\nLangkah 1: Kurangkan kedua ruas dengan 7:\n3x + 7 - 7 = 22 - 7\n3x = 15\nLangkah 2: Bagi kedua ruas dengan 3:\nx = 5\n\nPemeriksaan: 3(5) + 7 = 15 + 7 = 22 (Terbukti Benar).',
-    commonMisconceptions: '❌ Pindah ruas tanpa membalik tanda operasi: dari x + 5 = 12 ditulis x = 12 + 5 (Salah! Penjumlahan menjadi pengurangan saat diisolasi: x = 12 - 5).',
-    summary: 'PLSV diselesaikan dengan mengisolasi variabel menggunakan prinsip perlakuan setara pada kedua ruas persamaan hingga diperoleh nilai variabel tunggal.'
+    apperception: 'Saat pemain basket melempar bola ke dalam ring, lintasan bola di udara membentuk kurva melengkung mulus yang simetris. Kurva alamiah ini disebut PARABOLA. Dalam matematika, setiap bentuk lengkungan parabola dimodelkan secara sempurna oleh Fungsi Kuadrat.',
+    basicConcepts: `Bentuk Umum Fungsi Kuadrat:
+f(x) = ax² + bx + c dengan syarat a ≠ 0.
+
+Karakteristik Kurva Parabola:
+1. Nilai a (Kelengkungan & Titik Balik):
+- Jika a > 0 (positif), kurva TERBUKA KE ATAS dan memiliki TITIK BALIK MINIMUM.
+- Jika a < 0 (negatif), kurva TERBUKA KE BAWAH dan memiliki TITIK BALIK MAKSIMUM.
+
+2. Sumbu Simetri:
+Garis tegak vertikal yang membelah kurva parabola menjadi dua bagian simetris:
+x_s = -b / (2a)
+
+3. Diskriminan D = b² - 4ac:
+- D > 0: kurva memotong sumbu X di 2 titik berbeda.
+- D = 0: kurva menyinggung sumbu X di 1 titik.
+- D < 0: kurva tidak memotong sumbu X sama sekali.`,
+    detailedExplanation: `Titik Puncak (Titik Ekstrem) Parabola P(x_p, y_p):
+Koordinat titik balik puncak dirumuskan dengan:
+x_p = -b / (2a)
+y_p = -D / (4a) = -(b² - 4ac) / (4a)
+Atau y_p dapat dihitung langsung dengan mensubstitusi nilai x_p ke f(x): y_p = f(x_p).
+
+Penerapan Nyata: Ketinggian Maksimum Proyektil:
+Tinggi peluru h(t) = v₀t - 1/2 gt² adalah fungsi kuadrat dengan koefisien kuadrat negatif (a < 0), sehingga ketinggian maksimum dicapai tepat pada waktu puncak t_puncak = -b / (2a).`,
+    commonMisconceptions: `⚠️ KESALAHAN UMUM SISWA:
+1. Lupa tanda minus pada rumus sumbu simetri:
+SALAH: x = b / (2a) ❌
+BENAR: x = -b / (2a) ✅
+
+2. Keliru menentukan jenis ekstrem:
+Ketika a = -2 (negatif), siswa sering mengira nilainya minimum karena angkanya minus. Padahal karena kurva membuka ke bawah seperti payung, titik puncaknya adalah MAKSIMUM!`,
+    summary: 'Fungsi kuadrat f(x) = ax² + bx + c menghasilkan kurva parabola simetris. Sumbu simetri berada pada x = -b/(2a), dan nilai ekstrem y_p = -D/(4a) menentukan ketinggian maksimum atau biaya minimum.'
+  },
+
+  'topic-pemfaktoran': {
+    id: 'mat-pf',
+    topicId: 'topic-pemfaktoran',
+    title: 'Pemfaktoran Aljabar & Bentuk Kuadrat',
+    learningObjectives: [
+      '1. Menemukan Faktor Persekutuan Terbesar (FPB) dari suku-suku aljabar.',
+      '2. Memfaktorkan bentuk selisih dua kuadrat a² - b² = (a + b)(a - b).',
+      '3. Memfaktorkan bentuk kuadratik x² + bx + c menjadi (x + p)(x + q).'
+    ],
+    apperception: 'Pemfaktoran adalah proses memecah suatu ekspresi aljabar menjadi perkalian faktor-faktor pembentuknya, persis seperti menyatakan angka 12 sebagai 3 × 4. Pemfaktoran merupakan fondasi mutlak untuk menyelesaikan persamaan kuadrat dan menyederhanakan pecahan aljabar.',
+    basicConcepts: `Tiga Pola Utama Pemfaktoran:
+1. Memfaktorkan Faktor Persekutuan (Distributif Terbalik):
+ab + ac = a(b + c)
+Contoh: 6x² + 9x = 3x(2x + 3)
+
+2. Selisih Dua Kuadrat:
+a² - b² = (a + b)(a - b)
+Contoh: x² - 16 = (x + 4)(x - 4)
+
+3. Pemfaktoran x² + bx + c:
+Cari dua bilangan p dan q sedemikian sehingga:
+p + q = b (jumlah suku tengah)
+p × q = c (hasil kali konstanta)
+Maka: x² + bx + c = (x + p)(x + q)`,
+    detailedExplanation: `Langkah demi Langkah Pemfaktoran Trinomial:
+Misalkan memfaktorkan x² + 7x + 12:
+1. Nilai b = 7 dan c = 12.
+2. Cari dua bilangan yang jika dikali = 12 dan jika ditambah = 7.
+Pasangan faktor dari 12:
+- 1 dan 12 (1 + 12 = 13, bukan 7)
+- 2 dan 6 (2 + 6 = 8, bukan 7)
+- 3 dan 4 (3 + 4 = 7, TEPAT!)
+3. Maka bentuk faktornya adalah: (x + 3)(x + 4).`,
+    commonMisconceptions: `⚠️ KESALAHAN UMUM SISWA:
+1. Menganggap x² + 16 bisa difaktorkan dengan selisih kuadrat:
+SALAH: x² + 16 = (x + 4)(x - 4) ❌
+Ingat: Rumus hanya berlaku untuk SELISIH (tanda minus), BUKAN jumlah kuadrat!
+
+2. Kesalahan tanda pada bilangan bulat negatif:
+Untuk x² - 5x + 6, dua bilangan yang memenuhi adalah -2 dan -3 (karena -2 × -3 = +6 dan -2 + -3 = -5). Siswa sering salah menggunakan +2 dan +3.`,
+    summary: 'Pemfaktoran mengubah bentuk penjumlahan suku menjadi perkalian faktor. Kuasai bentuk FPB aljabar, selisih kuadrat, dan metode mencari pasangan bilangan jumlah-kali.'
   }
 };
 
 export const INITIAL_EXAMPLES: Record<string, ExampleItem[]> = {
+  'topic-bentuk-aljabar': [
+    {
+      id: 'ex-ba-1',
+      topicId: 'topic-bentuk-aljabar',
+      title: 'Menyederhanakan Penjumlahan Suku Sejenis',
+      problemStatement: 'Sederhanakan bentuk aljabar berikut:\n3x + 5x',
+      difficulty: 'LOTS',
+      keyTakeaway: 'Karena kedua suku memiliki variabel yang sama (x), cukup jumlahkan koefisiennya: 3 + 5 = 8.',
+      stepByStepSolution: [
+        {
+          stepNumber: 1,
+          title: 'Identifikasi Suku Sejenis',
+          description: 'Suku 3x dan 5x sama-sama memiliki variabel x berpangkat 1, sehingga keduanya sejenis.'
+        },
+        {
+          stepNumber: 2,
+          title: 'Jumlahkan Koefisien',
+          description: 'Gunakan sifat distributif: (3 + 5)x = 8x.',
+          mathExpression: '3x + 5x = 8x'
+        }
+      ]
+    },
+    {
+      id: 'ex-ba-2',
+      topicId: 'topic-bentuk-aljabar',
+      title: 'Penjumlahan Bentuk Aljabar Suku Banyak',
+      problemStatement: 'Tentukan hasil penjumlahan dari:\n(2x + 3) + (4x - 1)',
+      difficulty: 'MOTS',
+      keyTakeaway: 'Kelompokkan suku bervariabel dengan suku bervariabel, dan konstanta dengan konstanta.',
+      stepByStepSolution: [
+        {
+          stepNumber: 1,
+          title: 'Buka tanda kurung dan kelompokkan suku sejenis',
+          description: 'Kelompokkan suku bervariabel x: 2x + 4x, dan konstanta: +3 - 1.',
+          mathExpression: '(2x + 4x) + (3 - 1)'
+        },
+        {
+          stepNumber: 2,
+          title: 'Hitung hasil penjumlahan masing-masing kelompok',
+          description: '2x + 4x = 6x, dan 3 - 1 = 2.',
+          mathExpression: '= 6x + 2'
+        }
+      ]
+    },
+    {
+      id: 'ex-ba-3',
+      topicId: 'topic-bentuk-aljabar',
+      title: 'Perkalian Suku Tunggal dengan Sifat Distributif',
+      problemStatement: 'Kalikan dan sederhanakan bentuk aljabar berikut:\n2(x + 3)',
+      difficulty: 'MOTS',
+      keyTakeaway: 'Kalikan bilangan pengali di luar ke setiap suku di dalam kurung: a(b + c) = ab + ac.',
+      stepByStepSolution: [
+        {
+          stepNumber: 1,
+          title: 'Terapkan sifat distributif',
+          description: 'Kalikan 2 dengan x, lalu kalikan 2 dengan 3.',
+          mathExpression: '2 \\times x + 2 \\times 3'
+        },
+        {
+          stepNumber: 2,
+          title: 'Selesaikan perkalian',
+          description: 'Hasil akhirnya adalah 2x + 6.',
+          mathExpression: '= 2x + 6'
+        }
+      ]
+    },
+    {
+      id: 'ex-ba-4',
+      topicId: 'topic-bentuk-aljabar',
+      title: 'Perkalian Dua Bentuk Binomial',
+      problemStatement: 'Tentukan hasil perkalian aljabar dari:\n(x + 2)(x + 4)',
+      difficulty: 'HOTS',
+      keyTakeaway: 'Gunakan metode FOIL (depan, luar, dalam, belakang) kemudian sederhanakan suku tengah yang sejenis.',
+      stepByStepSolution: [
+        {
+          stepNumber: 1,
+          title: 'Kalikan setiap suku',
+          description: 'x × x = x²; x × 4 = 4x; 2 × x = 2x; 2 × 4 = 8.',
+          mathExpression: 'x^2 + 4x + 2x + 8'
+        },
+        {
+          stepNumber: 2,
+          title: 'Gabungkan suku tengah yang sejenis',
+          description: '4x + 2x = 6x.',
+          mathExpression: '= x^2 + 6x + 8'
+        }
+      ]
+    }
+  ],
+
   'topic-fungsi-kuadrat': [
     {
       id: 'ex-fk-1',
       topicId: 'topic-fungsi-kuadrat',
-      title: 'Menentukan Titik Puncak Parabola f(x) = x² - 6x + 8',
-      problemStatement: 'Diberikan fungsi kuadrat f(x) = x^2 - 6x + 8. Tentukan:\na. Sumbu simetri\nb. Nilai ekstrem dan jenisnya\nc. Koordinat titik puncak parabola',
+      title: 'Menentukan Sumbu Simetri dan Titik Puncak Parabola',
+      problemStatement: 'Diberikan fungsi kuadrat f(x) = x² - 6x + 8. Tentukan:\na. Persamaan sumbu simetri\nb. Nilai ekstrem dan jenisnya\nc. Koordinat titik puncak parabola',
       difficulty: 'MOTS',
-      keyTakeaway: 'Sumbu simetri selalu membagi parabola secara vertikal tepat pada x = -b/(2a). Nilai y puncak diperoleh dengan mensubstitusi x_p ke dalam rumus fungsi.',
+      keyTakeaway: 'Sumbu simetri selalu membagi parabola vertikal tepat pada x = -b/(2a). Nilai y puncak diperoleh dengan mensubstitusi x_p ke rumus fungsi.',
       stepByStepSolution: [
         {
           stepNumber: 1,
           title: 'Identifikasi koefisien a, b, dan c',
-          description: 'Dari f(x) = x² - 6x + 8, kita peroleh koefisien:\na = 1, b = -6, c = 8.\nKarena a = 1 > 0, grafik parabola terbuka ke ATAS dan memiliki nilai MINIMUM.',
-          mathExpression: 'a = 1 > 0 \\implies \\text{Parabola Terbuka ke Atas}'
+          description: 'Dari f(x) = x² - 6x + 8, diperoleh a = 1, b = -6, dan c = 8. Karena a = 1 > 0, kurva membuka ke atas dan memiliki nilai minimum.',
+          mathExpression: 'a = 1, \\quad b = -6, \\quad c = 8'
         },
         {
           stepNumber: 2,
-          title: 'Hitung sumbu simetri (x_p)',
-          description: 'Gunakan rumus sumbu simetri:\nx_p = -b / (2a) = -(-6) / (2 × 1) = 6 / 2 = 3.',
-          mathExpression: 'x_p = -\\frac{-6}{2(1)} = 3'
+          title: 'Hitung persamaan sumbu simetri',
+          description: 'Gunakan rumus x = -b / (2a):',
+          mathExpression: 'x_s = -\\frac{-6}{2(1)} = \\frac{6}{2} = 3'
         },
         {
           stepNumber: 3,
-          title: 'Hitung nilai ekstrem minimum (y_p)',
-          description: 'Substitusikan x_p = 3 ke dalam fungsi kuadrat:\nf(3) = (3)² - 6(3) + 8 = 9 - 18 + 8 = -1.',
-          mathExpression: 'y_p = f(3) = 3^2 - 6(3) + 8 = -1'
+          title: 'Hitung nilai ekstrem minimum (y_puncak)',
+          description: 'Substitusikan x = 3 ke dalam fungsi f(x):',
+          mathExpression: 'f(3) = (3)^2 - 6(3) + 8 = 9 - 18 + 8 = -1'
         },
         {
           stepNumber: 4,
           title: 'Tuliskan koordinat titik puncak',
-          description: 'Koordinat titik puncak minimum kurva parabola adalah (3, -1).',
+          description: 'Titik puncak parabola adalah P(3, -1) dengan nilai minimum y = -1.',
           mathExpression: 'P(x_p, y_p) = (3, -1)'
         }
       ]
     }
   ],
-  'topic-persamaan-kuadrat': [
+
+  'topic-pemfaktoran': [
     {
-      id: 'ex-pk-1',
-      topicId: 'topic-persamaan-kuadrat',
-      title: 'Menyelesaikan x² - 5x + 6 = 0 dengan Pemfaktoran',
-      problemStatement: 'Tentukan akar-akar himpunan penyelesaian dari persamaan kuadrat x^2 - 5x + 6 = 0.',
+      id: 'ex-pf-1',
+      topicId: 'topic-pemfaktoran',
+      title: 'Memfaktorkan Bentuk Trinomial Kuadrat',
+      problemStatement: 'Tentukan akar-akar himpunan penyelesaian dari pemfaktoran x² - 5x + 6 = 0.',
       difficulty: 'LOTS',
       keyTakeaway: 'Cari dua bilangan yang jika dikalikan bernilai +6 dan jika dijumlahkan bernilai -5. Bilangan tersebut adalah -2 dan -3.',
       stepByStepSolution: [
         {
           stepNumber: 1,
           title: 'Mencari pasangan bilangan p dan q',
-          description: 'Kita mencari p dan q dengan syarat p × q = 6 dan p + q = -5.\nPasangan faktor dari 6 adalah (-2) dan (-3), karena (-2) × (-3) = 6 dan (-2) + (-3) = -5.',
-          mathExpression: 'p = -2, \\quad q = -3'
+          description: 'p × q = 6 dan p + q = -5. Pasangannya adalah -2 dan -3.',
+          mathExpression: '(-2) \\times (-3) = 6 \\quad \\text{dan} \\quad (-2) + (-3) = -5'
         },
         {
           stepNumber: 2,
-          title: 'Tulis bentuk faktorisasi',
-          description: 'Ubah persamaan kuadrat menjadi hasil kali dua faktor linear:\n(x - 2)(x - 3) = 0.',
+          title: 'Menuliskan bentuk faktor',
+          description: '(x - 2)(x - 3) = 0.',
           mathExpression: '(x - 2)(x - 3) = 0'
         },
         {
           stepNumber: 3,
-          title: 'Tentukan masing-masing akar',
-          description: 'Agar hasil perkalian sama dengan 0, salah satu faktor harus bernilai 0:\nx - 2 = 0 → x₁ = 2\nx - 3 = 0 → x₂ = 3.',
+          title: 'Menentukan akar-akar persamaan',
+          description: 'x - 2 = 0 atau x - 3 = 0, sehingga x₁ = 2 atau x₂ = 3.',
           mathExpression: 'x_1 = 2 \\quad \\text{atau} \\quad x_2 = 3'
-        }
-      ]
-    }
-  ],
-  'topic-pemfaktoran': [
-    {
-      id: 'ex-pf-1',
-      topicId: 'topic-pemfaktoran',
-      title: 'Memfaktorkan 2x² + 7x + 3',
-      problemStatement: 'Faktorkanlah bentuk kuadrat 2x^2 + 7x + 3.',
-      difficulty: 'MOTS',
-      keyTakeaway: 'Pada ax² + bx + c dengan a ≠ 1, cari dua bilangan yang hasil kalinya a × c = 6 dan jumlahnya b = 7 (yaitu 1 dan 6), lalu pecah suku tengahnya.',
-      stepByStepSolution: [
-        {
-          stepNumber: 1,
-          title: 'Hitung nilai a × c dan pecah suku tengah',
-          description: 'a × c = 2 × 3 = 6. Pasangan yang berjumlah 7 adalah 1 dan 6.\nPecah 7x menjadi x + 6x: 2x² + 6x + x + 3.',
-          mathExpression: '2x^2 + 6x + x + 3'
-        },
-        {
-          stepNumber: 2,
-          title: 'Faktorkan secara berpasangan (pengelompokan)',
-          description: 'Kelompokkan: (2x² + 6x) + (x + 3) = 2x(x + 3) + 1(x + 3).',
-          mathExpression: '2x(x + 3) + 1(x + 3)'
-        },
-        {
-          stepNumber: 3,
-          title: 'Tarik faktor persekutuan yang sama',
-          description: 'Karena (x + 3) sama di kedua suku, tarik keluar menjadi:\n(2x + 1)(x + 3).',
-          mathExpression: '(2x + 1)(x + 3)'
         }
       ]
     }
   ]
 };
 
+// --- TOPIC ASSESSMENT QUESTIONS (Minimal 10 soal per sample topic) ---
 export const INITIAL_QUESTIONS: Question[] = [
-  // Diagnostic Questions (Fase A to Fase F foundations)
+  // 1. Diagnostic Questions 1 - 30
+  ...DIAGNOSTIC_QUESTIONS_30,
+
+  // 2. Sample Topic 1: Bentuk Aljabar (10 Questions: LOTS, MOTS, HOTS)
   {
-    id: 'diag-q1',
-    topicId: 'diagnostic',
-    questionText: 'Hasil dari perhitungan 125 + 375 - 240 adalah...',
-    mathExpression: '125 + 375 - 240 = ?',
+    id: 'ba-q1',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Koefisien dari variabel y pada bentuk aljabar 7x² - 5y + 12 adalah...',
+    mathExpression: '7x^2 - 5y + 12',
     questionType: 'multiple_choice',
     options: [
-      { id: 'A', text: '260' },
-      { id: 'B', text: '280' },
-      { id: 'C', text: '310' },
-      { id: 'D', text: '360' }
-    ],
-    correctAnswer: 'A',
-    explanation: '125 + 375 = 500. Kemudian 500 - 240 = 260.',
-    points: 10,
-    difficulty: 'LOTS',
-    conceptTag: 'Bilangan Cacah (Fase A/B)'
-  },
-  {
-    id: 'diag-q2',
-    topicId: 'diagnostic',
-    questionText: 'Pecahan yang senilai dengan 3/4 adalah...',
-    mathExpression: '\\frac{3}{4} = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: '6/8' },
-      { id: 'B', text: '9/15' },
-      { id: 'C', text: '12/20' },
-      { id: 'D', text: '5/6' }
-    ],
-    correctAnswer: 'A',
-    explanation: 'Jika pembilang dan penyebut 3/4 dikali 2, hasilnya adalah 6/8.',
-    points: 10,
-    difficulty: 'LOTS',
-    conceptTag: 'Pecahan (Fase B)'
-  },
-  {
-    id: 'diag-q3',
-    topicId: 'diagnostic',
-    questionText: 'Hasil operasi hitung aljabar (5x - 3) + (2x + 8) adalah...',
-    mathExpression: '(5x - 3) + (2x + 8) = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: '7x + 5' },
-      { id: 'B', text: '7x - 5' },
-      { id: 'C', text: '10x - 24' },
-      { id: 'D', text: '3x + 11' }
-    ],
-    correctAnswer: 'A',
-    explanation: 'Kelompokkan suku sejenis: (5x + 2x) + (-3 + 8) = 7x + 5.',
-    points: 10,
-    difficulty: 'MOTS',
-    conceptTag: 'Bentuk Aljabar (Fase D)'
-  },
-  {
-    id: 'diag-q4',
-    topicId: 'diagnostic',
-    questionText: 'Penyelesaian dari persamaan linear 4x - 5 = 19 adalah nilai x = ...',
-    mathExpression: '4x - 5 = 19 \\implies x = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: '5' },
-      { id: 'B', text: '6' },
+      { id: 'A', text: '-5' },
+      { id: 'B', text: '5' },
       { id: 'C', text: '7' },
-      { id: 'D', text: '8' }
-    ],
-    correctAnswer: 'B',
-    explanation: '4x = 19 + 5 = 24. Maka x = 24 / 4 = 6.',
-    points: 10,
-    difficulty: 'MOTS',
-    conceptTag: 'Persamaan Linear (Fase D)'
-  },
-  {
-    id: 'diag-q5',
-    topicId: 'diagnostic',
-    questionText: 'Bentuk pemfaktoran dari x² - 25 adalah...',
-    mathExpression: 'x^2 - 25 = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: '(x - 5)(x - 5)' },
-      { id: 'B', text: '(x + 5)(x - 5)' },
-      { id: 'C', text: '(x + 25)(x - 1)' },
-      { id: 'D', text: 'x(x - 25)' }
-    ],
-    correctAnswer: 'B',
-    explanation: 'Ini adalah bentuk selisih dua kuadrat a² - b² = (a + b)(a - b) dengan a = x dan b = 5.',
-    points: 10,
-    difficulty: 'MOTS',
-    conceptTag: 'Pemfaktoran (Fase D)'
-  },
-  {
-    id: 'diag-q6',
-    topicId: 'diagnostic',
-    questionText: 'Pada segitiga siku-siku dengan panjang sisi tegak 6 cm dan 8 cm, panjang sisi miringnya adalah...',
-    mathExpression: 'c = \\sqrt{6^2 + 8^2} = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: '9 cm' },
-      { id: 'B', text: '10 cm' },
-      { id: 'C', text: '12 cm' },
-      { id: 'D', text: '14 cm' }
-    ],
-    correctAnswer: 'B',
-    explanation: 'c = √(6² + 8²) = √(36 + 64) = √100 = 10 cm.',
-    points: 10,
-    difficulty: 'MOTS',
-    conceptTag: 'Geometri & Pythagoras (Fase D)'
-  },
-  {
-    id: 'diag-q7',
-    topicId: 'diagnostic',
-    questionText: 'Akar-akar dari persamaan kuadrat x² - 7x + 12 = 0 adalah...',
-    mathExpression: 'x^2 - 7x + 12 = 0 \\implies x_1, x_2 = ?',
-    questionType: 'multiple_choice',
-    options: [
-      { id: 'A', text: 'x = 3 atau x = 4' },
-      { id: 'B', text: 'x = -3 atau x = -4' },
-      { id: 'C', text: 'x = 2 atau x = 6' },
-      { id: 'D', text: 'x = -2 atau x = -6' }
+      { id: 'D', text: '12' }
     ],
     correctAnswer: 'A',
-    explanation: '(x - 3)(x - 4) = 0 sehingga x = 3 atau x = 4.',
+    explanation: 'Koefisien di depan y adalah -5 (tanda minus merupakan bagian dari koefisien).',
     points: 10,
-    difficulty: 'MOTS',
-    conceptTag: 'Persamaan Kuadrat (Fase E)'
+    difficulty: 'LOTS',
+    conceptTag: 'Unsur Bentuk Aljabar'
   },
   {
-    id: 'diag-q8',
-    topicId: 'diagnostic',
-    questionText: 'Titik puncak dari grafik fungsi kuadrat f(x) = x² - 4x + 1 adalah...',
-    mathExpression: 'f(x) = x^2 - 4x + 1 \\implies P(x_p, y_p) = ?',
+    id: 'ba-q2',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Pasangan suku yang merupakan suku sejenis adalah...',
     questionType: 'multiple_choice',
     options: [
-      { id: 'A', text: '(2, -3)' },
-      { id: 'B', text: '(-2, 13)' },
-      { id: 'C', text: '(4, 1)' },
-      { id: 'D', text: '(2, 3)' }
+      { id: 'A', text: '4a²b dan -3a²b' },
+      { id: 'B', text: '5x dan 5y' },
+      { id: 'C', text: '2p² dan 2p³' },
+      { id: 'D', text: '3ab dan 3bc' }
     ],
     correctAnswer: 'A',
-    explanation: 'x_p = -b/(2a) = -(-4)/(2) = 2. y_p = 2² - 4(2) + 1 = 4 - 8 + 1 = -3. Jadi titik puncak adalah (2, -3).',
+    explanation: 'Suku sejenis harus memiliki variabel dan pangkat variabel yang sama persis. Pada pilihan A, keduanya memiliki a²b.',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Suku Sejenis'
+  },
+  {
+    id: 'ba-q3',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Hasil dari 3x + 5x adalah...',
+    mathExpression: '3x + 5x = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '8x' },
+      { id: 'B', text: '8' },
+      { id: 'C', text: '15x' },
+      { id: 'D', text: '8x²' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Kedua suku sejenis bervariabel x, jumlahkan koefisiennya: (3 + 5)x = 8x.',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Operasi Penjumlahan Aljabar'
+  },
+  {
+    id: 'ba-q4',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Hasil penyederhanaan dari (2x + 3) + (4x - 1) adalah...',
+    mathExpression: '(2x + 3) + (4x - 1) = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '6x + 2' },
+      { id: 'B', text: '6x + 4' },
+      { id: 'C', text: '8x - 3' },
+      { id: 'D', text: '6x - 2' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Gabungkan suku sejenis: (2x + 4x) + (3 - 1) = 6x + 2.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Operasi Aljabar Suku Banyak'
+  },
+  {
+    id: 'ba-q5',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Hasil perkalian distributif 2(x + 3) adalah...',
+    mathExpression: '2(x + 3) = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '2x + 6' },
+      { id: 'B', text: '2x + 3' },
+      { id: 'C', text: 'x + 6' },
+      { id: 'D', text: '5x' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Kalikan 2 dengan x dan 2 dengan 3: 2(x) + 2(3) = 2x + 6.',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Sifat Distributif'
+  },
+  {
+    id: 'ba-q6',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Bentuk sederhana dari (8p - 5q) - (3p - 2q) adalah...',
+    mathExpression: '(8p - 5q) - (3p - 2q) = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '5p - 3q' },
+      { id: 'B', text: '5p - 7q' },
+      { id: 'C', text: '11p - 7q' },
+      { id: 'D', text: '5p + 3q' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Distribusikan tanda minus: 8p - 5q - 3p + 2q = (8p - 3p) + (-5q + 2q) = 5p - 3q.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Pengurangan Aljabar'
+  },
+  {
+    id: 'ba-q7',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Hasil dari perkalian binomial (x + 2)(x + 4) adalah...',
+    mathExpression: '(x + 2)(x + 4) = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: 'x² + 6x + 8' },
+      { id: 'B', text: 'x² + 8x + 6' },
+      { id: 'C', text: 'x² + 8' },
+      { id: 'D', text: '2x + 6' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'x² + 4x + 2x + 8 = x² + 6x + 8.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Perkalian Binomial'
+  },
+  {
+    id: 'ba-q8',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Sebuah persegi panjang memiliki panjang (3x + 2) cm dan lebar (x + 1) cm. Keliling persegi panjang tersebut dalam x adalah...',
+    mathExpression: 'K = 2(p + l)',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '8x + 6 cm' },
+      { id: 'B', text: '4x + 3 cm' },
+      { id: 'C', text: '3x² + 5x + 2 cm' },
+      { id: 'D', text: '6x + 4 cm' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Keliling = 2[(3x + 2) + (x + 1)] = 2[4x + 3] = 8x + 6 cm.',
     points: 10,
     difficulty: 'HOTS',
-    conceptTag: 'Fungsi Kuadrat (Fase E)'
+    conceptTag: 'Aplikasi Geometri Aljabar'
+  },
+  {
+    id: 'ba-q9',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Jika nilai x = 4 dan y = -2, maka nilai dari bentuk aljabar 3x² - 2y + 5 adalah...',
+    mathExpression: '3(4)^2 - 2(-2) + 5 = ?',
+    questionType: 'numerical',
+    options: [
+      { id: 'A', text: '57' },
+      { id: 'B', text: '49' },
+      { id: 'C', text: '41' },
+      { id: 'D', text: '53' }
+    ],
+    correctAnswer: 'A',
+    explanation: '3(16) - 2(-2) + 5 = 48 + 4 + 5 = 57.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Substitusi Nilai Aljabar'
+  },
+  {
+    id: 'ba-q10',
+    topicId: 'topic-bentuk-aljabar',
+    questionText: 'Hasil pemangkatan bentuk aljabar (2x - 3)² adalah...',
+    mathExpression: '(2x - 3)^2 = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '4x² - 12x + 9' },
+      { id: 'B', text: '4x² - 9' },
+      { id: 'C', text: '4x² + 9' },
+      { id: 'D', text: '4x² - 6x + 9' }
+    ],
+    correctAnswer: 'A',
+    explanation: '(a - b)² = a² - 2ab + b². Maka (2x)² - 2(2x)(3) + (3)² = 4x² - 12x + 9.',
+    points: 10,
+    difficulty: 'HOTS',
+    conceptTag: 'Kuadrat Binomial'
   },
 
-  // Topic Assessment Questions: Fungsi Kuadrat
+  // 3. Sample Topic 2: Fungsi Kuadrat (10 Questions)
   {
     id: 'fk-q1',
     topicId: 'topic-fungsi-kuadrat',
-    questionText: 'Grafik fungsi kuadrat f(x) = -2x² + 8x - 5 memiliki kurva yang...',
+    questionText: 'Grafik fungsi kuadrat f(x) = -2x² + 8x - 5 memiliki bentuk kurva parabola yang...',
     mathExpression: 'f(x) = -2x^2 + 8x - 5',
     questionType: 'multiple_choice',
     options: [
-      { id: 'A', text: 'Terbuka ke atas dan memiliki nilai minimum' },
-      { id: 'B', text: 'Terbuka ke bawah dan memiliki nilai maksimum' },
-      { id: 'C', text: 'Terbuka ke atas dan memiliki nilai maksimum' },
-      { id: 'D', text: 'Membuka ke kanan' }
+      { id: 'A', text: 'Terbuka ke bawah dan memiliki nilai balik maksimum' },
+      { id: 'B', text: 'Terbuka ke atas dan memiliki nilai balik minimum' },
+      { id: 'C', text: 'Terbuka ke atas dan memiliki nilai balik maksimum' },
+      { id: 'D', text: 'Membuka ke kanan mendatar' }
     ],
-    correctAnswer: 'B',
-    explanation: 'Karena koefisien a = -2 < 0, parabola terbuka ke bawah dan memiliki titik balik tertinggi (nilai maksimum).',
+    correctAnswer: 'A',
+    explanation: 'Karena koefisien a = -2 < 0, kurva parabola terbuka ke bawah dan memiliki titik puncak tertinggi (maksimum).',
     points: 10,
     difficulty: 'LOTS',
     conceptTag: 'Karakteristik Kurva Parabola'
@@ -539,12 +880,12 @@ export const INITIAL_QUESTIONS: Question[] = [
     mathExpression: 'x_s = -\\frac{b}{2a}',
     questionType: 'multiple_choice',
     options: [
-      { id: 'A', text: 'x = -2' },
-      { id: 'B', text: 'x = 2' },
+      { id: 'A', text: 'x = 2' },
+      { id: 'B', text: 'x = -2' },
       { id: 'C', text: 'x = 4' },
       { id: 'D', text: 'x = -4' }
     ],
-    correctAnswer: 'B',
+    correctAnswer: 'A',
     explanation: 'x = -b / (2a) = -(-12) / (2 × 3) = 12 / 6 = 2.',
     points: 10,
     difficulty: 'LOTS',
@@ -563,7 +904,7 @@ export const INITIAL_QUESTIONS: Question[] = [
       { id: 'D', text: '9' }
     ],
     correctAnswer: 'A',
-    explanation: 'D = b² - 4ac = (-6)² - 4(1)(9) = 36 - 36 = 0. Artinya kurva menyinggung sumbu X di tepat satu titik.',
+    explanation: 'D = b² - 4ac = (-6)² - 4(1)(9) = 36 - 36 = 0. Menyinggung sumbu X di tepat 1 titik.',
     points: 10,
     difficulty: 'MOTS',
     conceptTag: 'Diskriminan Parabola'
@@ -571,41 +912,130 @@ export const INITIAL_QUESTIONS: Question[] = [
   {
     id: 'fk-q4',
     topicId: 'topic-fungsi-kuadrat',
-    questionText: 'Tinggi h (dalam meter) sebuah roket mainan setelah t detik dimodelkan dengan fungsi h(t) = 40t - 5t². Tinggi maksimum yang dicapai roket tersebut adalah...',
-    mathExpression: 'h(t) = 40t - 5t^2 \\implies h_{\\text{maks}} = ?',
+    questionText: 'Titik puncak dari grafik fungsi kuadrat f(x) = x² - 4x + 1 adalah...',
+    mathExpression: 'P(x_p, y_p) = ?',
     questionType: 'multiple_choice',
     options: [
-      { id: 'A', text: '60 meter' },
-      { id: 'B', text: '80 meter' },
-      { id: 'C', text: '100 meter' },
-      { id: 'D', text: '120 meter' }
+      { id: 'A', text: '(2, -3)' },
+      { id: 'B', text: '(-2, 13)' },
+      { id: 'C', text: '(4, 1)' },
+      { id: 'D', text: '(2, 3)' }
     ],
-    correctAnswer: 'B',
-    explanation: 'Waktu puncak t = -b/(2a) = -40/(2 × -5) = 4 detik. Ketinggian maksimum h(4) = 40(4) - 5(4)² = 160 - 5(16) = 160 - 80 = 80 meter.',
+    correctAnswer: 'A',
+    explanation: 'x_p = -(-4) / 2(1) = 2. f(2) = (2)² - 4(2) + 1 = 4 - 8 + 1 = -3. P(2, -3).',
     points: 10,
-    difficulty: 'HOTS',
-    conceptTag: 'Penerapan Nilai Ekstrem Kontekstual'
+    difficulty: 'MOTS',
+    conceptTag: 'Titik Puncak'
   },
   {
     id: 'fk-q5',
     topicId: 'topic-fungsi-kuadrat',
-    questionText: 'Sebuah fungsi kuadrat memotong sumbu X di titik (1, 0) dan (5, 0), serta melalui titik (0, 10). Rumus fungsi kuadrat tersebut adalah...',
+    questionText: 'Tinggi h (meter) roket setelah t detik dimodelkan dengan h(t) = 40t - 5t². Tinggi maksimum yang dicapai roket adalah...',
+    mathExpression: 'h_{\\text{maks}} = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '80 meter' },
+      { id: 'B', text: '60 meter' },
+      { id: 'C', text: '100 meter' },
+      { id: 'D', text: '40 meter' }
+    ],
+    correctAnswer: 'A',
+    explanation: 't_puncak = -40 / (2 × -5) = 4 detik. h(4) = 40(4) - 5(16) = 160 - 80 = 80 meter.',
+    points: 10,
+    difficulty: 'HOTS',
+    conceptTag: 'Nilai Ekstrem Kontekstual'
+  },
+  {
+    id: 'fk-q6',
+    topicId: 'topic-fungsi-kuadrat',
+    questionText: 'Grafik f(x) = x² - 5x + 6 memotong sumbu Y pada koordinat...',
+    mathExpression: 'x = 0 \\implies f(0) = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '(0, 6)' },
+      { id: 'B', text: '(6, 0)' },
+      { id: 'C', text: '(0, -5)' },
+      { id: 'D', text: '(0, 1)' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Titik potong sumbu Y terjadi ketika x = 0: f(0) = (0)² - 5(0) + 6 = 6. Jadi titik potongnya adalah (0, 6).',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Titik Potong Sumbu'
+  },
+  {
+    id: 'fk-q7',
+    topicId: 'topic-fungsi-kuadrat',
+    questionText: 'Sebuah fungsi kuadrat memotong sumbu X di titik (1, 0) dan (5, 0) serta melalui titik (0, 10). Rumus fungsinya adalah...',
     mathExpression: 'f(x) = a(x - x_1)(x - x_2)',
     questionType: 'multiple_choice',
     options: [
       { id: 'A', text: 'f(x) = 2x² - 12x + 10' },
       { id: 'B', text: 'f(x) = x² - 6x + 5' },
       { id: 'C', text: 'f(x) = 2x² + 12x - 10' },
-      { id: 'D', text: 'f(x) = -2x² + 12x - 10' }
+      { id: 'D', text: 'f(x) = -2x² + 12x + 10' }
     ],
     correctAnswer: 'A',
-    explanation: 'f(x) = a(x - 1)(x - 5). Titik (0, 10) → 10 = a(0 - 1)(0 - 5) → 10 = 5a → a = 2. Maka f(x) = 2(x² - 6x + 5) = 2x² - 12x + 10.',
+    explanation: 'f(x) = a(x - 1)(x - 5). Masukkan (0, 10): 10 = a(-1)(-5) → 5a = 10 → a = 2. f(x) = 2(x² - 6x + 5) = 2x² - 12x + 10.',
     points: 10,
     difficulty: 'HOTS',
     conceptTag: 'Menyusun Fungsi Kuadrat'
   },
+  {
+    id: 'fk-q8',
+    topicId: 'topic-fungsi-kuadrat',
+    questionText: 'Jika f(x) = x² + 2kx + (k + 6) menyinggung sumbu X, maka nilai k positif adalah...',
+    mathExpression: 'D = 0 \\implies b^2 - 4ac = 0',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '3' },
+      { id: 'B', text: '2' },
+      { id: 'C', text: '4' },
+      { id: 'D', text: '6' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'D = (2k)² - 4(1)(k + 6) = 4k² - 4k - 24 = 0 → k² - k - 6 = 0 → (k - 3)(k + 2) = 0. Nilai k positif adalah 3.',
+    points: 10,
+    difficulty: 'HOTS',
+    conceptTag: 'Analisis Parameter Diskriminan'
+  },
+  {
+    id: 'fk-q9',
+    topicId: 'topic-fungsi-kuadrat',
+    questionText: 'Berapakah nilai minimum fungsi kuadrat f(x) = 2x² - 8x + 11?',
+    mathExpression: 'y_p = f(x_p) = ?',
+    questionType: 'numerical',
+    options: [
+      { id: 'A', text: '3' },
+      { id: 'B', text: '2' },
+      { id: 'C', text: '5' },
+      { id: 'D', text: '-3' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'x_p = -(-8) / (2 × 2) = 2. f(2) = 2(2)² - 8(2) + 11 = 8 - 16 + 11 = 3.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Nilai Minimum Parabola'
+  },
+  {
+    id: 'fk-q10',
+    topicId: 'topic-fungsi-kuadrat',
+    questionText: 'Manakah dari pernyataan berikut yang BENAR tentang grafik f(x) = x² + 4?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: 'Kurva berada seluruhnya di atas sumbu X (definit positif)' },
+      { id: 'B', text: 'Kurva memotong sumbu X di dua titik' },
+      { id: 'C', text: 'Kurva memiliki nilai maksimum di y = 4' },
+      { id: 'D', text: 'Kurva terbuka ke bawah' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Karena a = 1 > 0 dan D = 0² - 4(1)(4) = -16 < 0, grafik berada seluruhnya di atas sumbu X (definit positif).',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Definit Positif'
+  },
 
-  // Prerequisite / Remedial Assessment Questions: Pemfaktoran Aljabar
+  // 4. Sample Topic 3: Pemfaktoran Aljabar (Prasyarat/Remedial - 10 Questions)
   {
     id: 'pf-q1',
     topicId: 'topic-pemfaktoran',
@@ -619,7 +1049,7 @@ export const INITIAL_QUESTIONS: Question[] = [
       { id: 'D', text: '4x³y(2 - 3y)' }
     ],
     correctAnswer: 'A',
-    explanation: 'FPB dari 8 dan 12 adalah 4; variabel persekutuan pangkat terkecil adalah x² dan y. Sehingga faktornya adalah 4x²y(2x - 3y).',
+    explanation: 'FPB angka 8 dan 12 adalah 4; variabel bersekutu pangkat terkecil adalah x² dan y. Maka faktornya 4x²y(2x - 3y).',
     points: 10,
     difficulty: 'LOTS',
     conceptTag: 'FPB Aljabar'
@@ -627,7 +1057,7 @@ export const INITIAL_QUESTIONS: Question[] = [
   {
     id: 'pf-q2',
     topicId: 'topic-pemfaktoran',
-    questionText: 'Faktorisasi lengkap dari 9x² - 49 adalah...',
+    questionText: 'Faktorisasi lengkap dari selisih kuadrat 9x² - 49 adalah...',
     mathExpression: '9x^2 - 49 = ?',
     questionType: 'multiple_choice',
     options: [
@@ -637,7 +1067,7 @@ export const INITIAL_QUESTIONS: Question[] = [
       { id: 'D', text: '(3x + 49)(3x - 1)' }
     ],
     correctAnswer: 'A',
-    explanation: '(3x)² - (7)² = (3x + 7)(3x - 7). Selisih dua kuadrat.',
+    explanation: '(3x)² - (7)² = (3x + 7)(3x - 7). Bentuk selisih dua kuadrat.',
     points: 10,
     difficulty: 'LOTS',
     conceptTag: 'Selisih Dua Kuadrat'
@@ -645,7 +1075,7 @@ export const INITIAL_QUESTIONS: Question[] = [
   {
     id: 'pf-q3',
     topicId: 'topic-pemfaktoran',
-    questionText: 'Hasil pemfaktoran dari x² + 2x - 24 adalah...',
+    questionText: 'Hasil pemfaktoran dari bentuk trinomial x² + 2x - 24 adalah...',
     mathExpression: 'x^2 + 2x - 24 = ?',
     questionType: 'multiple_choice',
     options: [
@@ -655,7 +1085,7 @@ export const INITIAL_QUESTIONS: Question[] = [
       { id: 'D', text: '(x - 12)(x + 2)' }
     ],
     correctAnswer: 'A',
-    explanation: 'Cari dua bilangan dengan p + q = 2 dan p × q = -24. Bilangan tersebut adalah +6 dan -4. Jadi (x + 6)(x - 4).',
+    explanation: 'Dua bilangan dengan jumlah p + q = 2 dan hasil kali p × q = -24 adalah +6 dan -4. Jadi (x + 6)(x - 4).',
     points: 10,
     difficulty: 'MOTS',
     conceptTag: 'Pemfaktoran Trinomial'
@@ -673,38 +1103,152 @@ export const INITIAL_QUESTIONS: Question[] = [
       { id: 'D', text: '(x + 2)(x + 4)' }
     ],
     correctAnswer: 'A',
-    explanation: '3 × 8 = 24. Dua bilangan yang dikali = 24 dan ditambah = 10 adalah 4 dan 6. Pecah 10x: 3x² + 6x + 4x + 8 = 3x(x + 2) + 4(x + 2) = (3x + 4)(x + 2).',
+    explanation: 'a × c = 3 × 8 = 24. Dua bilangan yang dikali = 24 dan ditambah = 10 adalah 4 dan 6. Pecah 10x: 3x² + 6x + 4x + 8 = 3x(x + 2) + 4(x + 2) = (3x + 4)(x + 2).',
     points: 10,
     difficulty: 'HOTS',
     conceptTag: 'Faktorisasi ax² + bx + c'
+  },
+  {
+    id: 'pf-q5',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Pemfaktoran dari x² - 10x + 25 adalah...',
+    mathExpression: 'x^2 - 10x + 25 = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '(x - 5)²' },
+      { id: 'B', text: '(x + 5)²' },
+      { id: 'C', text: '(x - 25)(x - 1)' },
+      { id: 'D', text: '(x - 5)(x + 5)' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Bentuk kuadrat sempurna a² - 2ab + b² = (a - b)². Di sini a = x dan b = 5, sehingga (x - 5)²',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Kuadrat Sempurna'
+  },
+  {
+    id: 'pf-q6',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Faktor persekutuan dari 15ab² dan 25a²b adalah...',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '5ab' },
+      { id: 'B', text: '5a²b²' },
+      { id: 'C', text: '15ab' },
+      { id: 'D', text: '25ab' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'FPB 15 dan 25 adalah 5; faktor persekutuan variabel adalah a dan b. Jadi 5ab.',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'FPB Suku Aljabar'
+  },
+  {
+    id: 'pf-q7',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Hasil pemfaktoran dari 2x² - 8 adalah...',
+    mathExpression: '2x^2 - 8 = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: '2(x + 2)(x - 2)' },
+      { id: 'B', text: '(2x + 4)(x - 2)' },
+      { id: 'C', text: '2(x² - 4)' },
+      { id: 'D', text: '(2x - 2)(x + 4)' }
+    ],
+    correctAnswer: 'A',
+    explanation: 'Keluarkan faktor 2 terlebih dahulu: 2(x² - 4). Lalu faktorkan selisih kuadrat: 2(x + 2)(x - 2).',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Faktorisasi Bertahap'
+  },
+  {
+    id: 'pf-q8',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Akar-akar penyelesaian dari persamaan (2x - 5)(x + 3) = 0 adalah...',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: 'x = 5/2 atau x = -3' },
+      { id: 'B', text: 'x = -5/2 atau x = 3' },
+      { id: 'C', text: 'x = 5 atau x = -3' },
+      { id: 'D', text: 'x = 2/5 atau x = 3' }
+    ],
+    correctAnswer: 'A',
+    explanation: '2x - 5 = 0 → x = 5/2. Atau x + 3 = 0 → x = -3.',
+    points: 10,
+    difficulty: 'LOTS',
+    conceptTag: 'Akar Faktor'
+  },
+  {
+    id: 'pf-q9',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Bentuk sederhana dari pecahan aljabar (x² - 9) / (x + 3) untuk x ≠ -3 adalah...',
+    mathExpression: '\\frac{x^2 - 9}{x + 3} = ?',
+    questionType: 'multiple_choice',
+    options: [
+      { id: 'A', text: 'x - 3' },
+      { id: 'B', text: 'x + 3' },
+      { id: 'C', text: 'x - 9' },
+      { id: 'D', text: '1' }
+    ],
+    correctAnswer: 'A',
+    explanation: '(x + 3)(x - 3) / (x + 3) = x - 3.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Penyederhanaan Pecahan Aljabar'
+  },
+  {
+    id: 'pf-q10',
+    topicId: 'topic-pemfaktoran',
+    questionText: 'Jika x² + bx + 16 merupakan bentuk kuadrat sempurna dengan b > 0, maka nilai b adalah...',
+    questionType: 'numerical',
+    options: [
+      { id: 'A', text: '8' },
+      { id: 'B', text: '4' },
+      { id: 'C', text: '16' },
+      { id: 'D', text: '32' }
+    ],
+    correctAnswer: 'A',
+    explanation: '(x + 4)² = x² + 8x + 16, maka nilai b = 8.',
+    points: 10,
+    difficulty: 'MOTS',
+    conceptTag: 'Bentuk Kuadrat Sempurna'
   }
 ];
 
 export const INITIAL_ASSESSMENTS: Assessment[] = [
   {
     id: 'as-diagnostic',
-    title: 'Asesmen Diagnostik Awal Matematika (Fase A - F)',
+    title: 'Asesmen Diagnostik Awal Matematika (30 Soal Adaptif Fase A - F)',
     type: 'DIAGNOSTIC',
-    durationMinutes: 15,
+    durationMinutes: 30,
     passingScore: 75,
-    totalQuestions: 8
+    totalQuestions: 30
+  },
+  {
+    id: 'as-bentuk-aljabar',
+    topicId: 'topic-bentuk-aljabar',
+    title: 'Asesmen Kompetensi: Bentuk Aljabar & Operasi Suku',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
   },
   {
     id: 'as-fungsi-kuadrat',
     topicId: 'topic-fungsi-kuadrat',
-    title: 'Asesmen Kompetensi: Fungsi Kuadrat & Titik Ekstrem',
+    title: 'Asesmen Kompetensi: Fungsi Kuadrat & Titik Balik Ekstrem',
     type: 'TOPIC',
-    durationMinutes: 20,
+    durationMinutes: 25,
     passingScore: 75,
-    totalQuestions: 5
+    totalQuestions: 10
   },
   {
     id: 'as-pemfaktoran-prereq',
     topicId: 'topic-pemfaktoran',
     title: 'Asesmen Prasyarat & Remedial: Pemfaktoran Aljabar',
     type: 'PREREQUISITE',
-    durationMinutes: 15,
+    durationMinutes: 20,
     passingScore: 75,
-    totalQuestions: 4
+    totalQuestions: 10
   }
 ];
