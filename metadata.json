@@ -1,0 +1,6 @@
+{
+  "name": "MathPath - Adaptive Mathematics Learning Platform",
+  "description": "Platform pembelajaran matematika adaptif kurikulum Indonesia Fase A-F dengan diagnostik, prerequisite engine, remedial, AI tutor, dan secure AI webcam assessment monitoring.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
