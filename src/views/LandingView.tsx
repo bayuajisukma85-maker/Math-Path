@@ -47,80 +47,183 @@ export const LandingView: React.FC<LandingViewProps> = ({ onNavigate }) => {
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-              Belajar Matematika Mandiri Secara <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-300">Adaptif & Presisi</span>.
+              Belajar Matematika Sesuai Kemampuanmu.
             </h1>
 
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl">
-              Setiap siswa memiliki titik awal unik. MathPath mendiagnosis penguasaan konsep awal melalui 30 kompetensi komprehensif, merancang alur belajar terpersonalisasi, dan menyediakan asesmen aman dengan AI Teacher Monitor.
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed max-w-2xl font-normal">
+              MathPath membantu kamu mengetahui kemampuan awal, memilih titik mulai yang tepat, mempelajari konsep, berlatih, mengikuti asesmen, dan mendapatkan jalur belajar yang sesuai dengan kebutuhanmu.
             </p>
 
-            {/* Quick CTAs */}
+            {/* Core CTAs */}
             <div className="flex flex-wrap items-center gap-3 pt-4">
               <button
-                onClick={() => onNavigate('diagnostic')}
-                className="px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2 hover:scale-102"
+                onClick={() => onNavigate('register')}
+                className="px-6 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2 hover:scale-102 cursor-pointer"
               >
-                <span>Mulai Asesmen Diagnostik (30 Soal)</span>
+                <span>MULAI BELAJAR</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <button
-                onClick={() => onNavigate('dashboard')}
-                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm rounded-xl border border-white/20 transition-all"
+                onClick={() => onNavigate('login')}
+                className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm rounded-xl border border-white/20 transition-all cursor-pointer"
               >
-                Masuk ke Jalur Belajar
+                LOGIN
               </button>
 
               <button
-                onClick={() => onNavigate('login')}
-                className="px-5 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm rounded-xl border border-slate-700 transition-all"
+                onClick={() => onNavigate('diagnostic')}
+                className="px-5 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm rounded-xl border border-slate-700 transition-all cursor-pointer flex items-center gap-2"
               >
-                Masuk / Login Akun
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Asesmen Diagnostik (30 Soal)</span>
               </button>
             </div>
 
             {/* 1-Click Demo Persona Badges */}
             <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center gap-3 text-xs text-slate-300">
-              <span className="font-semibold text-slate-400">Pintasan Uji Coba Demo:</span>
+              <span className="font-semibold text-slate-400">Pintasan Uji Coba Cepat (Demo):</span>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => {
-                    switchUserRole('student');
+                    switchUserRole('student', 'user-student-1');
                     onNavigate('dashboard');
                   }}
-                  className="px-3 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 border border-indigo-500/30 transition-colors"
+                  className="px-3 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 border border-indigo-500/30 transition-colors cursor-pointer"
                 >
-                  👤 Siswa 1 (Budi - Fase E)
+                  👤 Siswa 1: Budi (Fase E)
                 </button>
                 <button
                   onClick={() => {
-                    switchUserRole('student');
+                    switchUserRole('student', 'user-student-2');
                     onNavigate('diagnostic');
                   }}
-                  className="px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-500/30 transition-colors"
+                  className="px-3 py-1 rounded-lg bg-sky-500/20 hover:bg-sky-500/30 text-sky-200 border border-sky-500/30 transition-colors cursor-pointer"
                 >
-                  ✨ Siswa 2 (Siti - Diagnostik Baru)
+                  ✨ Siswa 2: Siti (Diagnostik Baru)
                 </button>
                 <button
                   onClick={() => {
                     switchUserRole('teacher');
                     onNavigate('teacher-dashboard');
                   }}
-                  className="px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors"
+                  className="px-3 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 border border-emerald-500/30 transition-colors cursor-pointer"
                 >
-                  👩‍🏫 Guru (Ibu Dewi - Monitoring)
+                  👩‍🏫 Guru: Ibu Dewi (Monitoring)
                 </button>
                 <button
                   onClick={() => {
                     switchUserRole('admin');
                     onNavigate('admin-dashboard');
                   }}
-                  className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/30 transition-colors"
+                  className="px-3 py-1 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 border border-purple-500/30 transition-colors cursor-pointer"
                 >
                   ⚙️ Admin Kurikulum
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8 CORE SECTIONS (Master Prompt Section 45) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            8 Pilar Pembelajaran Mandiri MathPath
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            Dirancang dari diagnostik awal hingga asesmen aman dan dukungan AI Tutor personal.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* 1. Diagnostic Assessment */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">1. Diagnostic Assessment</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              30 soal terstandar di 10 domain kompetensi untuk mendeteksi profil kemampuan dan menentukan starting point belajar Anda secara presisi.
+            </p>
+          </div>
+
+          {/* 2. Adaptive Learning */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-200">
+              <Compass className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">2. Adaptive Learning</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Alur belajar fleksibel yang menyesuaikan diri secara dinamis. Jika ada kelemahan konsep, sistem merekomendasikan materi prasyarat.
+            </p>
+          </div>
+
+          {/* 3. Complete Materials */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-200">
+              <BookOpen className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">3. Complete Materials</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Materi konseptual mendalam disertai apersepsi, konsep dasar, visualisasi rumus KaTeX, pembahasan bertingkat, dan kesalahan umum siswa.
+            </p>
+          </div>
+
+          {/* 4. Practice */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-200">
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">4. Practice (Latihan)</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              10 soal latihan interaktif per topik yang dapat diulang tanpa penalti, lengkap dengan feedback instan dan pembahasan langkah demi langkah.
+            </p>
+          </div>
+
+          {/* 5. Assessment */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200">
+              <Award className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">5. Assessment Resmi (KKM 75)</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Evaluasi penguasaan konsep dengan sebaran soal LOTS, MOTS, dan HOTS. Nilai dihitung langsung di server untuk validitas dan akurasi tinggi.
+            </p>
+          </div>
+
+          {/* 6. Personal Progress */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center border border-cyan-200">
+              <BarChart3 className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">6. Personal Progress</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Visual roadmap jalur belajar berwarna (Hijau: Mastered, Biru: Tersedia, Merah: Remedial) serta rekam jejak riwayat aktivitas belajar lengkap.
+            </p>
+          </div>
+
+          {/* 7. AI Tutor */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center border border-purple-200">
+              <BrainCircuit className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">7. AI Tutor Pribadi</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Asisten AI interaktif yang siap memberikan analogi, membimbing langkah, dan menjelaskan kesalahan konsep (otomatis non-aktif saat asesmen resmi).
+            </p>
+          </div>
+
+          {/* 8. Secure Assessment */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow space-y-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center border border-slate-300">
+              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+            </div>
+            <h3 className="font-bold text-slate-900 text-base">8. Secure Assessment Mode</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Monitoring integritas berbasis browser non-punitif (preview kamera, deteksi tab switch, fullscreen) dengan dashboard review khusus guru.
+            </p>
           </div>
         </div>
       </section>
