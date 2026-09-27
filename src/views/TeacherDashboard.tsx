@@ -65,13 +65,23 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ onNavigate }
           </p>
         </div>
 
-        <button
-          onClick={() => onNavigate('teacher-security')}
-          className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm flex items-center gap-2"
-        >
-          <ShieldAlert className="w-4 h-4" />
-          <span>Monitoring Asesmen AI ({data?.reviewRequiredCount || 0} Perlu Tinjauan)</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={() => onNavigate('teacher-ai-curriculum')}
+            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm flex items-center gap-2"
+          >
+            <Sparkles className="w-4 h-4 text-amber-300" />
+            <span>AI Curriculum & Content Generator</span>
+          </button>
+
+          <button
+            onClick={() => onNavigate('teacher-security')}
+            className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm flex items-center gap-2"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            <span>Monitoring Asesmen AI ({data?.reviewRequiredCount || 0} Perlu Tinjauan)</span>
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}

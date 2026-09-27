@@ -152,7 +152,7 @@ export const INITIAL_TOPICS: Topic[] = [
     prerequisiteIds: ['topic-operasi-pecahan']
   },
 
-  // --- FASE D (Prioritas Penuh: SMP) ---
+  // --- FASE D (Prioritas Penuh: SMP - 9 Topik Standar Kurikulum) ---
   {
     id: 'topic-fase-d-bilangan',
     levelId: 'level-d1',
@@ -166,6 +166,18 @@ export const INITIAL_TOPICS: Topic[] = [
     prerequisiteIds: ['topic-operasi-pecahan']
   },
   {
+    id: 'topic-fase-d-rasio',
+    levelId: 'level-d1',
+    phaseId: 'phase-d',
+    title: 'Rasio dan Proporsi',
+    slug: 'rasio-dan-proporsi',
+    description: 'Konsep rasio kesetaraan, perbandingan senilai dan berbalik nilai dalam konteks kecepatan, skala peta, dan konversi.',
+    passingScore: 75,
+    estimatedMinutes: 40,
+    orderIndex: 8,
+    prerequisiteIds: ['topic-fase-d-bilangan']
+  },
+  {
     id: 'topic-bentuk-aljabar',
     levelId: 'level-d1',
     phaseId: 'phase-d',
@@ -174,8 +186,8 @@ export const INITIAL_TOPICS: Topic[] = [
     description: 'Mengenal variabel, koefisien, konstanta, suku sejenis, serta penjumlahan, pengurangan, dan perkalian aljabar.',
     passingScore: 75,
     estimatedMinutes: 45,
-    orderIndex: 8,
-    prerequisiteIds: ['topic-fase-d-bilangan']
+    orderIndex: 9,
+    prerequisiteIds: ['topic-fase-d-rasio']
   },
   {
     id: 'topic-plsv',
@@ -186,8 +198,32 @@ export const INITIAL_TOPICS: Topic[] = [
     description: 'Menyelesaikan persamaan linear bentuk ax + b = c dengan kesetaraan aljabar dan pemodelan cerita.',
     passingScore: 75,
     estimatedMinutes: 45,
-    orderIndex: 9,
+    orderIndex: 10,
     prerequisiteIds: ['topic-bentuk-aljabar']
+  },
+  {
+    id: 'topic-fase-d-spldv',
+    levelId: 'level-d2',
+    phaseId: 'phase-d',
+    title: 'Sistem Persamaan Linear Dua Variabel (SPLDV)',
+    slug: 'sistem-persamaan-linear-dua-variabel',
+    description: 'Menentukan himpunan penyelesaian SPLDV dengan metode eliminasi, substitusi, grafik, dan pemodelan masalah nyata.',
+    passingScore: 75,
+    estimatedMinutes: 50,
+    orderIndex: 11,
+    prerequisiteIds: ['topic-plsv']
+  },
+  {
+    id: 'topic-fase-d-fungsi',
+    levelId: 'level-d3',
+    phaseId: 'phase-d',
+    title: 'Relasi dan Fungsi Linear',
+    slug: 'relasi-dan-fungsi-linear',
+    description: 'Memahami relasi, fungsi, daerah asal (domain), daerah hasil (range), dan grafik persamaan garis lurus y = mx + c.',
+    passingScore: 75,
+    estimatedMinutes: 45,
+    orderIndex: 12,
+    prerequisiteIds: ['topic-fase-d-spldv']
   },
   {
     id: 'topic-pemfaktoran',
@@ -198,19 +234,19 @@ export const INITIAL_TOPICS: Topic[] = [
     description: 'Memfaktorkan suku aljabar persekutuan (FPB), selisih dua kuadrat, dan bentuk kuadrat trinomial ax² + bx + c.',
     passingScore: 75,
     estimatedMinutes: 50,
-    orderIndex: 10,
+    orderIndex: 13,
     prerequisiteIds: ['topic-bentuk-aljabar']
   },
   {
     id: 'topic-pythagoras',
     levelId: 'level-d4',
     phaseId: 'phase-d',
-    title: 'Teorema Pythagoras & Geometri Segitiga',
+    title: 'Teorema Pythagoras & Geometri',
     slug: 'teorema-pythagoras',
-    description: 'Membuktikan dan menerapkan hubungan a² + b² = c² pada segitiga siku-siku serta tripel Pythagoras.',
+    description: 'Membuktikan dan menerapkan hubungan a² + b² = c² pada segitiga siku-siku serta pengukuran geometri bangun datar.',
     passingScore: 75,
     estimatedMinutes: 40,
-    orderIndex: 11,
+    orderIndex: 14,
     prerequisiteIds: ['topic-bentuk-aljabar']
   },
   {
@@ -222,19 +258,19 @@ export const INITIAL_TOPICS: Topic[] = [
     description: 'Menghitung mean (rata-rata), median (nilai tengah), modus, dan jangkauan data tunggal.',
     passingScore: 75,
     estimatedMinutes: 40,
-    orderIndex: 12,
+    orderIndex: 15,
     prerequisiteIds: ['topic-plsv']
   },
   {
     id: 'topic-fase-d-peluang',
     levelId: 'level-d5',
     phaseId: 'phase-d',
-    title: 'Peluang Kejadian Tunggal',
+    title: 'Peluang Kejadian Tunggal & Majemuk',
     slug: 'peluang-kejadian-fase-d',
     description: 'Titik sampel, ruang sampel n(S), dan menghitung nilai peluang kejadian teoretik P(A) = n(A)/n(S).',
     passingScore: 75,
     estimatedMinutes: 35,
-    orderIndex: 13,
+    orderIndex: 16,
     prerequisiteIds: ['topic-fase-d-statistika']
   },
 
@@ -1250,5 +1286,260 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
     durationMinutes: 20,
     passingScore: 75,
     totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-bilangan',
+    topicId: 'topic-fase-d-bilangan',
+    title: 'Asesmen Kompetensi: Bilangan Bulat & Rasional',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-rasio',
+    topicId: 'topic-fase-d-rasio',
+    title: 'Asesmen Kompetensi: Rasio dan Proporsi',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-plsv',
+    topicId: 'topic-plsv',
+    title: 'Asesmen Kompetensi: Persamaan Linear Satu Variabel (PLSV)',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-spldv',
+    topicId: 'topic-fase-d-spldv',
+    title: 'Asesmen Kompetensi: Sistem Persamaan Linear Dua Variabel (SPLDV)',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-fungsi',
+    topicId: 'topic-fase-d-fungsi',
+    title: 'Asesmen Kompetensi: Relasi dan Fungsi Linear',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-pythagoras',
+    topicId: 'topic-pythagoras',
+    title: 'Asesmen Kompetensi: Teorema Pythagoras & Geometri',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-statistika',
+    topicId: 'topic-fase-d-statistika',
+    title: 'Asesmen Kompetensi: Statistika & Ukuran Pemusatan Data',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
+  },
+  {
+    id: 'as-fase-d-peluang',
+    topicId: 'topic-fase-d-peluang',
+    title: 'Asesmen Kompetensi: Peluang Kejadian Tunggal & Majemuk',
+    type: 'TOPIC',
+    durationMinutes: 25,
+    passingScore: 75,
+    totalQuestions: 10
   }
 ];
+
+import { CurriculumSource, CurriculumUnit, Competency } from '../src/types';
+
+export const INITIAL_CURRICULUM_SOURCES: CurriculumSource[] = [
+  {
+    id: 'src-resmi-fase-d',
+    name: 'Dokumen Standar Kurikulum Merdeka Matematika SMP (Fase D)',
+    phaseCode: 'FASE_D',
+    subject: 'Matematika',
+    isOfficial: true,
+    sourceType: 'DOCUMENT_TEXT',
+    rawContent: 'Capaian Pembelajaran (CP) Matematika Fase D: Peserta didik dapat mengoperasikan secara efisien bilangan bulat dan pecahan, menerapkan konsep rasio dan proporsi, menyelesaikan bentuk aljabar, persamaan linear satu variabel, SPLDV, relasi fungsi, memahami teorema Pythagoras, ukuran pemusatan statistika, dan peluang kejadian.',
+    cpText: 'Pada akhir Fase D, peserta didik dapat menyelesaikan masalah kontekstual menggunakan konsep bilangan, aljabar, geometri, analisis data dan peluang.',
+    tpText: '1. Memahami operasi bilangan bulat & rasional.\n2. Menggunakan konsep rasio senilai dan berbalik nilai.\n3. Memanipulasi bentuk aljabar & menyelesaikan PLSV/SPLDV.\n4. Menganalisis fungsi linear dan garis lurus.\n5. Mengaplikasikan Teorema Pythagoras.\n6. Menghitung mean, median, modus dan peluang kejadian.',
+    atpText: 'Bilangan Bulat & Rasional → Rasio dan Proporsi → Bentuk Aljabar → PLSV → SPLDV → Relasi & Fungsi → Geometri & Pythagoras → Statistika → Peluang',
+    createdAt: new Date().toISOString(),
+    createdBy: 'Puskur Kemendikbudristek'
+  },
+  {
+    id: 'src-resmi-fase-e',
+    name: 'Dokumen Standar Kurikulum Merdeka Matematika SMA (Fase E)',
+    phaseCode: 'FASE_E',
+    subject: 'Matematika',
+    isOfficial: true,
+    sourceType: 'DOCUMENT_TEXT',
+    rawContent: 'Capaian Pembelajaran (CP) Matematika Fase E: Peserta didik dapat menggeneralisasi sifat eksponen dan logaritma, menyelesaikan sistem persamaan kuadrat, menganalisis kurva fungsi kuadrat, dan perbandingan trigonometri dasar segitiga siku-siku.',
+    cpText: 'Peserta didik dapat memodelkan fenomena alamiah dan sosial dengan fungsi kuadrat, eksponensial, dan trigonometri.',
+    tpText: '1. Mengoperasikan bilangan berpangkat & logaritma.\n2. Menyelesaikan persamaan dan fungsi kuadrat.\n3. Menentukan rasio trigonometri segitiga siku-siku.',
+    atpText: 'Eksponen & Logaritma → Persamaan Kuadrat → Fungsi Kuadrat & Titik Ekstrem → Trigonometri Segitiga Siku-Siku',
+    createdAt: new Date().toISOString(),
+    createdBy: 'Puskur Kemendikbudristek'
+  }
+];
+
+export const INITIAL_COMPETENCIES: Competency[] = [
+  { id: 'comp-d1', code: 'KD-D-01', element: 'Bilangan', title: 'Operasi Bilangan Bulat & Rasional', description: 'Menghitung operasi aritmatika bulat, urutan operasi, FPB & KPK.', cognitiveLevel: 'LOTS', phaseCode: 'FASE_D', orderIndex: 1 },
+  { id: 'comp-d2', code: 'KD-D-02', element: 'Bilangan', title: 'Perbandingan Senilai & Berbalik Nilai', description: 'Membedakan dan menghitung rasio proporsional kontekstual.', cognitiveLevel: 'MOTS', phaseCode: 'FASE_D', orderIndex: 2 },
+  { id: 'comp-d3', code: 'KD-D-03', element: 'Aljabar', title: 'Operasi Suku Aljabar', description: 'Menyederhanakan suku sejenis dan perkalian distributif.', cognitiveLevel: 'LOTS', phaseCode: 'FASE_D', orderIndex: 3 },
+  { id: 'comp-d4', code: 'KD-D-04', element: 'Aljabar', title: 'Penyelesaian PLSV & SPLDV', description: 'Menemukan nilai variabel pada persamaan dan pemodelan cerita.', cognitiveLevel: 'MOTS', phaseCode: 'FASE_D', orderIndex: 4 },
+  { id: 'comp-d5', code: 'KD-D-05', element: 'Aljabar', title: 'Relasi dan Fungsi Linear', description: 'Menentukan gradien, rumus fungsi, dan diagram panah.', cognitiveLevel: 'MOTS', phaseCode: 'FASE_D', orderIndex: 5 },
+  { id: 'comp-d6', code: 'KD-D-06', element: 'Geometri', title: 'Teorema Pythagoras & Geometri Ruang', description: 'Menerapkan hubungan a² + b² = c² pada segitiga siku-siku.', cognitiveLevel: 'MOTS', phaseCode: 'FASE_D', orderIndex: 6 },
+  { id: 'comp-d7', code: 'KD-D-07', element: 'Analisis Data dan Peluang', title: 'Ukuran Pemusatan Data', description: 'Menghitung mean, median, modus data tunggal.', cognitiveLevel: 'LOTS', phaseCode: 'FASE_D', orderIndex: 7 },
+  { id: 'comp-d8', code: 'KD-D-08', element: 'Analisis Data dan Peluang', title: 'Peluang Teoretik Kejadian', description: 'Menentukan titik sampel dan probabilitas P(A) = n(A)/n(S).', cognitiveLevel: 'HOTS', phaseCode: 'FASE_D', orderIndex: 8 }
+];
+
+export const INITIAL_CURRICULUM_UNITS: CurriculumUnit[] = [
+  {
+    id: 'unit-d-bilangan',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Bilangan',
+    cp: 'Peserta didik dapat membaca, menulis, dan membandingkan bilangan bulat, bilangan rasional dan irasional, bilangan desimal, serta menggunakannya dalam pemodelan.',
+    tp: 'Memahami bilangan bulat, operasi hitung campuran, FPB, KPK, dan estimasi nilai bilangan rasional.',
+    atp: 'Unit ke-1 pada Alur Tujuan Pembelajaran Fase D (Kelas 7 Semester 1).',
+    topicTitle: 'Bilangan Bulat & Rasional',
+    subtopics: ['Konsep Bilangan Bulat Positif & Negatif', 'Operasi Hitung Campuran', 'FPB dan KPK dalam Kehidupan Nyata'],
+    competencies: ['KD-D-01'],
+    prerequisites: [{ title: 'Operasi Pecahan Campuran, Desimal & Rasio', topicId: 'topic-operasi-pecahan', reasoning: 'Fondasi aritmatika pecahan dari Fase C' }],
+    learningSequence: 1,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-rasio',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Bilangan',
+    cp: 'Peserta didik dapat menggunakan konsep rasio (skala, proporsi, dan laju perubahan) dalam penyelesaian masalah sehari-hari.',
+    tp: 'Menganalisis perbandingan senilai dan berbalik nilai pada tabel, grafik, dan persamaan konversi.',
+    atp: 'Unit ke-2 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Rasio dan Proporsi',
+    subtopics: ['Rasio Satuan & Skala Peta', 'Perbandingan Senilai', 'Perbandingan Berbalik Nilai'],
+    competencies: ['KD-D-02'],
+    prerequisites: [{ title: 'Bilangan Bulat & Rasional', topicId: 'topic-fase-d-bilangan', reasoning: 'Operasi perkalian dan pembagian bilangan rasional' }],
+    learningSequence: 2,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-aljabar',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Aljabar',
+    cp: 'Peserta didik dapat mengenali, memprediksi dan menggeneralisasi pola, serta menyajikan dan memanipulasi bentuk aljabar.',
+    tp: 'Menyederhanakan bentuk aljabar linear dan melakukan perkalian sifat distributif.',
+    atp: 'Unit ke-3 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Bentuk Aljabar & Operasi Dasar',
+    subtopics: ['Koefisien, Variabel, Konstanta', 'Operasi Penjumlahan & Pengurangan Suku Sejenis', 'Perkalian Sifat Distributif'],
+    competencies: ['KD-D-03'],
+    prerequisites: [{ title: 'Rasio dan Proporsi', topicId: 'topic-fase-d-rasio', reasoning: 'Pemahaman representasi perbandingan variabel' }],
+    learningSequence: 3,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-plsv',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Aljabar',
+    cp: 'Peserta didik dapat memahami relasi dan fungsi, serta menyelesaikan persamaan dan pertidaksamaan linear satu variabel.',
+    tp: 'Menentukan solusi persamaan linear satu variabel ax + b = c.',
+    atp: 'Unit ke-4 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Persamaan Linear Satu Variabel (PLSV)',
+    subtopics: ['Konsep Kesetaraan Persamaan', 'Penyelesaian Aljabar PLSV', 'Pemodelan Soal Cerita'],
+    competencies: ['KD-D-04'],
+    prerequisites: [{ title: 'Bentuk Aljabar & Operasi Dasar', topicId: 'topic-bentuk-aljabar', reasoning: 'Pengelompokan suku dan pemindahan ruas aljabar' }],
+    learningSequence: 4,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-spldv',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Aljabar',
+    cp: 'Peserta didik dapat menyelesaikan sistem persamaan linear dua variabel melalui beberapa cara untuk penyelesaian masalah.',
+    tp: 'Menentukan himpunan penyelesaian SPLDV dengan metode eliminasi dan substitusi.',
+    atp: 'Unit ke-5 pada Alur Tujuan Pembelajaran Fase D (Kelas 8).',
+    topicTitle: 'Sistem Persamaan Linear Dua Variabel (SPLDV)',
+    subtopics: ['Metode Substitusi', 'Metode Eliminasi', 'Aplikasi Penentuan Harga Barang'],
+    competencies: ['KD-D-04'],
+    prerequisites: [{ title: 'Persamaan Linear Satu Variabel (PLSV)', topicId: 'topic-plsv', reasoning: 'Substitusi satu variabel ke variabel lain' }],
+    learningSequence: 5,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-fungsi',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Aljabar',
+    cp: 'Peserta didik dapat menyajikan, menganalisis, dan menyelesaikan masalah dengan menggunakan relasi, fungsi dan persamaan garis lurus.',
+    tp: 'Menganalisis relasi, pemetaan fungsi f(x) = mx + c, domain, kodomain, range, dan kemiringan garis (gradien).',
+    atp: 'Unit ke-6 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Relasi dan Fungsi Linear',
+    subtopics: ['Diagram Panah & Notasi Fungsi', 'Menghitung Nilai Fungsi', 'Kemiringan Garis Lurus (Gradien m)'],
+    competencies: ['KD-D-05'],
+    prerequisites: [{ title: 'Sistem Persamaan Linear Dua Variabel (SPLDV)', topicId: 'topic-fase-d-spldv', reasoning: 'Grafik garis dan titik potong dua variabel' }],
+    learningSequence: 6,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-geometri',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Geometri',
+    cp: 'Peserta didik dapat menggunakan hubungan sudut, membuktikan dan menerapkan teorema Pythagoras.',
+    tp: 'Menghitung panjang hipotenusa dan sisi tegak segitiga siku-siku serta membuktikan tripel Pythagoras.',
+    atp: 'Unit ke-7 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Teorema Pythagoras & Geometri',
+    subtopics: ['Dalil Pythagoras a² + b² = c²', 'Tripel Pythagoras Populer', 'Aplikasi Jarak Dua Titik'],
+    competencies: ['KD-D-06'],
+    prerequisites: [{ title: 'Bentuk Aljabar & Operasi Dasar', topicId: 'topic-bentuk-aljabar', reasoning: 'Kuadrat dan akar kuadrat aljabar' }],
+    learningSequence: 7,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-statistika',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Analisis Data dan Peluang',
+    cp: 'Peserta didik dapat merumuskan pertanyaan, mengumpulkan, menyajikan, dan menganalisis data untuk menjawab pertanyaan dengan ukuran pemusatan.',
+    tp: 'Menghitung mean, median, modus, dan menganalisis dampak nilai pencilan (outlier).',
+    atp: 'Unit ke-8 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Statistika Dasar & Ukuran Pemusatan',
+    subtopics: ['Mean (Rata-Rata)', 'Median (Nilai Tengah)', 'Modus & Jangkauan'],
+    competencies: ['KD-D-07'],
+    prerequisites: [{ title: 'Persamaan Linear Satu Variabel (PLSV)', topicId: 'topic-plsv', reasoning: 'Rumus rata-rata melibatkan persamaan linear' }],
+    learningSequence: 8,
+    isOfficialVerified: true
+  },
+  {
+    id: 'unit-d-peluang',
+    sourceId: 'src-resmi-fase-d',
+    phaseCode: 'FASE_D',
+    element: 'Analisis Data dan Peluang',
+    cp: 'Peserta didik dapat menjelaskan dan menggunakan pengertian peluang dan frekuensi relatif untuk menentukan frekuensi harapan satu kejadian pada suatu percobaan sederhana.',
+    tp: 'Menghitung peluang teoretik kejadian tunggal P(A) = n(A)/n(S).',
+    atp: 'Unit ke-9 pada Alur Tujuan Pembelajaran Fase D.',
+    topicTitle: 'Peluang Kejadian Tunggal & Majemuk',
+    subtopics: ['Ruang Sampel & Titik Sampel', 'Peluang Teoretik', 'Frekuensi Harapan'],
+    competencies: ['KD-D-08'],
+    prerequisites: [{ title: 'Statistika Dasar & Ukuran Pemusatan', topicId: 'topic-fase-d-statistika', reasoning: 'Frekuensi data dan distribusi proporsi' }],
+    learningSequence: 9,
+    isOfficialVerified: true
+  }
+];
+

@@ -13,11 +13,19 @@ import { StudentHistoryView } from './views/StudentHistoryView';
 import { TeacherDashboard } from './views/TeacherDashboard';
 import { TeacherSecurityView } from './views/TeacherSecurityView';
 import { AdminDashboard } from './views/AdminDashboard';
+import { AiCurriculumView } from './views/AiCurriculumView';
 import { AiTutorModal } from './components/AiTutorModal';
 
 function AppContent() {
   const { role, user } = useAuth();
-  const [currentView, setCurrentView] = useState<string>('landing');
+  const [currentView, setCurrentView] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (path === '/teacher/ai-curriculum') return 'teacher-ai-curriculum';
+      if (path === '/admin/ai-curriculum') return 'admin-ai-curriculum';
+    }
+    return 'landing';
+  });
   const [selectedTopicSlug, setSelectedTopicSlug] = useState<string>('fungsi-kuadrat');
   const [isAiTutorOpen, setIsAiTutorOpen] = useState<boolean>(false);
   const [activeTopicForAi, setActiveTopicForAi] = useState<string>('Fungsi Kuadrat');
@@ -27,6 +35,11 @@ function AppContent() {
       setSelectedTopicSlug(param);
     }
     setCurrentView(view);
+    if (typeof window !== 'undefined') {
+      if (view === 'teacher-ai-curriculum') window.history.pushState({}, '', '/teacher/ai-curriculum');
+      else if (view === 'admin-ai-curriculum') window.history.pushState({}, '', '/admin/ai-curriculum');
+      else window.history.pushState({}, '', '/');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -97,7 +110,14 @@ function AppContent() {
         )}
 
         {currentView === 'admin-dashboard' && (
-          <AdminDashboard />
+          <AdminDashboard onNavigate={handleNavigate} />
+        )}
+
+        {(currentView === 'teacher-ai-curriculum' || currentView === 'admin-ai-curriculum') && (
+          <AiCurriculumView
+            onNavigate={handleNavigate}
+            isAdmin={currentView === 'admin-ai-curriculum'}
+          />
         )}
       </main>
 

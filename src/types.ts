@@ -281,3 +281,236 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
 }
+
+// ===================================================================
+// AI CONTENT GENERATION, CURRICULUM ENGINE & REVIEW TYPES
+// ===================================================================
+export type AiContentType = 'MATERIAL' | 'EXAMPLES' | 'QUESTIONS' | 'TOPIC_PACKAGE' | 'CURRICULUM_PLAN';
+export type AiContentStatus = 'DRAFT' | 'REVIEW' | 'PENDING_REVIEW' | 'NEEDS_REVIEW' | 'APPROVED' | 'PUBLISHED' | 'REJECTED';
+
+export interface CurriculumSource {
+  id: string;
+  name: string;
+  phaseCode: PhaseCode;
+  subject: string;
+  isOfficial: boolean;
+  sourceType: 'DOCUMENT_TEXT' | 'CP_TP_ATP' | 'MANUAL_ENTRY' | 'SYNTHESIS';
+  rawContent: string;
+  cpText?: string;
+  tpText?: string;
+  atpText?: string;
+  createdAt: string;
+  createdBy: string;
+}
+
+export interface Competency {
+  id: string;
+  code: string;
+  element: string; // 'Bilangan' | 'Aljabar' | 'Pengukuran' | 'Geometri' | 'Analisis Data dan Peluang' | 'Kalkulus'
+  title: string;
+  description: string;
+  cognitiveLevel: 'LOTS' | 'MOTS' | 'HOTS';
+  phaseCode: PhaseCode;
+  orderIndex: number;
+}
+
+export interface CurriculumUnit {
+  id: string;
+  sourceId?: string;
+  phaseCode: PhaseCode;
+  element: string;
+  cp: string; // Capaian Pembelajaran
+  tp: string; // Tujuan Pembelajaran
+  atp: string; // Alur Tujuan Pembelajaran
+  topicTitle: string;
+  subtopics: string[];
+  competencies: string[];
+  prerequisites: Array<{
+    title: string;
+    topicId?: string;
+    reasoning: string;
+  }>;
+  learningSequence: number;
+  isOfficialVerified?: boolean;
+}
+
+export interface PracticeQuestion extends Question {
+  competencyId?: string;
+  competencyTitle?: string;
+  subtopicTitle?: string;
+  prerequisiteConcept?: string;
+  estimatedTimeSeconds: number;
+}
+
+export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+
+export interface JobProgressStage {
+  stage: string;
+  progressPercent: number;
+  description: string;
+  completed: boolean;
+}
+
+export interface AiGenerationJob {
+  id: string;
+  jobType: 'CURRICULUM_ANALYSIS' | 'FULL_TOPIC_CONTENT' | 'MATERIAL_ONLY' | 'QUESTIONS_ONLY' | 'ASSESSMENT_10';
+  status: JobStatus;
+  progressPercent: number;
+  currentStage: string;
+  stages: JobProgressStage[];
+  inputParams: Record<string, any>;
+  resultData?: any;
+  error?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContentVersion {
+  id: string;
+  contentId: string;
+  versionNumber: number; // 1, 2, 3...
+  title: string;
+  contentType: AiContentType;
+  contentData: any;
+  createdBy: string;
+  creatorRole: string;
+  changeSummary: string;
+  isPublished: boolean;
+  createdAt: string;
+}
+
+export interface ContentReview {
+  id: string;
+  contentId: string;
+  versionNumber: number;
+  reviewerId: string;
+  reviewerName: string;
+  reviewerRole: string;
+  action: 'APPROVE' | 'REJECT' | 'PUBLISH' | 'REQUEST_CHANGES' | 'REGENERATE';
+  notes: string;
+  qualityChecklist?: {
+    noUnansweredQuestions: boolean;
+    singleCorrectAnswerValid: boolean;
+    explanationConsistent: boolean;
+    mathFormulasValid: boolean;
+    mathCalculationVerified: boolean;
+    difficultyBalanced: boolean;
+    topicCompetencyAligned: boolean;
+    noDuplicateContent: boolean;
+    languageAgeAppropriate: boolean;
+  };
+  reviewedAt: string;
+}
+
+export interface AiQualityIssue {
+  code: string;
+  severity: 'WARNING' | 'ERROR';
+  field: string;
+  message: string;
+}
+
+export interface AiQualityMetrics {
+  mathCorrectnessScore: number; // 0-100
+  curriculumAlignmentScore: number; // 0-100
+  readabilityScore: number; // 0-100
+  latexValid: boolean;
+  lotsCount: number;
+  motsCount: number;
+  hotsCount: number;
+  issues?: AiQualityIssue[];
+  notes: string;
+  passedValidation: boolean;
+}
+
+export interface AiTopicPackageData {
+  title: string;
+  slug: string;
+  phaseId: string;
+  phaseCode: PhaseCode;
+  element?: string;
+  description: string;
+  passingScore: number;
+  estimatedMinutes: number;
+  prerequisiteTopicIds: string[];
+  prerequisiteReasoning?: string;
+  material: LearningMaterial;
+  examples: ExampleItem[];
+  questions: Question[];
+  practiceQuestions?: PracticeQuestion[];
+}
+
+export interface AiGeneratedContentData {
+  material?: LearningMaterial;
+  examples?: ExampleItem[];
+  questions?: Question[];
+  practiceQuestions?: PracticeQuestion[];
+  topicPackage?: AiTopicPackageData;
+  curriculumPlan?: {
+    sourceInfo: CurriculumSource;
+    units: CurriculumUnit[];
+    elementsSummary: Record<string, number>;
+  };
+}
+
+export interface AiGeneratedItem {
+  id: string;
+  contentType: AiContentType;
+  topicId?: string;
+  topicTitle: string;
+  phaseCode: PhaseCode;
+  status: AiContentStatus;
+  version: number;
+  contentData: AiGeneratedContentData;
+  qualityMetrics: AiQualityMetrics;
+  creatorId: string;
+  creatorName: string;
+  creatorRole: string;
+  reviewerId?: string;
+  reviewerName?: string;
+  reviewerNotes?: string;
+  aiPromptUsed: string;
+  createdAt: string;
+  reviewedAt?: string;
+  publishedAt?: string;
+}
+
+export interface AiGenerationRequest {
+  contentType: AiContentType;
+  topicId?: string;
+  topicTitle: string;
+  phaseCode: PhaseCode;
+  element?: string;
+  targetGrade?: string;
+  difficultyBalance?: {
+    lots: number;
+    mots: number;
+    hots: number;
+  };
+  questionCount?: number;
+  customInstructions?: string;
+  contextDomain?: string;
+  cpText?: string;
+  tpText?: string;
+  atpText?: string;
+}
+
+export interface AiCurriculumAlignmentResult {
+  topicTitle: string;
+  recommendedPhase: PhaseCode;
+  element?: string;
+  suggestedPrerequisites: Array<{
+    topicId?: string;
+    title: string;
+    reasoning: string;
+    isEssential: boolean;
+  }>;
+  suggestedFollowUpTopics: string[];
+  learningObjectives: string[];
+  competencyStandard: string;
+  difficultyDistribution: {
+    lots: number;
+    mots: number;
+    hots: number;
+  };
+}
+

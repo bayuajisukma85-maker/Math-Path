@@ -13,7 +13,11 @@ import {
 } from 'lucide-react';
 import { Topic, Phase } from '../types';
 
-export const AdminDashboard: React.FC = () => {
+interface AdminDashboardProps {
+  onNavigate?: (view: string, param?: any) => void;
+}
+
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigate }) => {
   const { authFetch } = useAuth();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [phases, setPhases] = useState<Phase[]>([]);
@@ -103,13 +107,25 @@ export const AdminDashboard: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => setIsAddingTopic(true)}
-          className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Tambah Topik Kurikulum</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          {onNavigate && (
+            <button
+              onClick={() => onNavigate('admin-ai-curriculum')}
+              className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center gap-2"
+            >
+              <Layers className="w-4 h-4 text-amber-300" />
+              <span>AI Curriculum Engine</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setIsAddingTopic(true)}
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tambah Topik Kurikulum</span>
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}

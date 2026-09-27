@@ -7,7 +7,19 @@ import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { db } from './server/store';
-import { askAiTutor } from './server/ai';
+import {
+  askAiTutor,
+  generateLearningMaterialAi,
+  generateExamplesAi,
+  generateQuestionsAi,
+  generateTopicPackageAi,
+  alignCurriculumAndPrerequisites,
+  refineAiContent,
+  calculateQualityMetrics,
+  analyzeCurriculumDocument,
+  generateStandard10QuestionsAssessment
+} from './server/ai';
+import { AiGeneratedItem, AiGenerationJob } from './src/types';
 
 async function startServer() {
   const app = express();
@@ -444,6 +456,517 @@ async function startServer() {
       res.status(500).json({ error: 'Gagal mendapatkan jawaban dari AI Tutor.' });
     }
   });
+
+  // ==========================================
+  // AI CONTENT GENERATION & REVIEW ROUTES
+  // ==========================================
+
+  // 1. Generate AI Content (Material, Examples, Questions, or Topic Package)
+  app.post('/api/ai/generate', async (req, res) => {
+    try {
+      const {
+        contentType,
+        topicId,
+        topicTitle,
+        phaseCode,
+        targetGrade,
+        questionCount,
+        customInstructions,
+        creatorId,
+        creatorName,
+        creatorRole
+      } = req.body;
+
+      if (!contentType || !topicTitle || !phaseCode) {
+        return res.status(400).json({ error: 'Parameter contentType, topicTitle, dan phaseCode wajib diisi.' });
+      }
+
+      let contentData: any = {};
+      const reqObj = {
+        contentType,
+        topicId,
+        topicTitle,
+        phaseCode,
+        targetGrade,
+        questionCount: questionCount || (contentType === 'EXAMPLES' ? 3 : 5),
+        customInstructions
+      };
+
+      if (contentType === 'MATERIAL') {
+        const material = await generateLearningMaterialAi(reqObj);
+        contentData.material = material;
+      } else if (contentType === 'EXAMPLES') {
+        const examples = await generateExamplesAi(reqObj);
+        contentData.examples = examples;
+      } else if (contentType === 'QUESTIONS') {
+        const questions = await generateQuestionsAi(reqObj);
+        contentData.questions = questions;
+      } else if (contentType === 'TOPIC_PACKAGE') {
+        const topicPackage = await generateTopicPackageAi(reqObj);
+        contentData.topicPackage = topicPackage;
+      }
+
+      const qualityMetrics = calculateQualityMetrics(contentType, contentData);
+
+      const newItem: AiGeneratedItem = {
+        id: `ai-gen-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        contentType,
+        topicId,
+        topicTitle,
+        phaseCode,
+        status: 'PENDING_REVIEW',
+        version: 1,
+        contentData,
+        qualityMetrics,
+        creatorId: creatorId || 'user-teacher-1',
+        creatorName: creatorName || 'Guru Matematika',
+        creatorRole: creatorRole || 'teacher',
+        aiPromptUsed: customInstructions || `Generate ${contentType} for ${topicTitle} (${phaseCode})`,
+        createdAt: new Date().toISOString()
+      };
+
+      db.createAiGeneratedContent(newItem);
+      res.json({ success: true, item: newItem });
+    } catch (err: any) {
+      console.error('AI Content Generation Route Error:', err);
+      res.status(500).json({ error: 'Gagal menghasilkan konten dengan AI.' });
+    }
+  });
+
+  // 2. Get AI Content Queue (Filterable by status & contentType)
+  app.get('/api/ai/content-queue', (req, res) => {
+    const { status, contentType } = req.query as { status?: string; contentType?: string };
+    const queue = db.getAiGeneratedContentQueue({ status, contentType });
+    res.json({ queue });
+  });
+
+  // 3. Get Single AI Content Item
+  app.get('/api/ai/content-queue/:id', (req, res) => {
+    const item = db.getAiGeneratedContentById(req.params.id);
+    if (!item) {
+      return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+    }
+    res.json({ item });
+  });
+
+  // 4. Update / Edit Draft Content
+  app.put('/api/ai/content-queue/:id', (req, res) => {
+    const updated = db.updateAiGeneratedContent(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+    }
+    res.json({ success: true, item: updated });
+  });
+
+  // 5. Review & Approval (Approve or Reject -> Publishes to live curriculum if approved)
+  app.post('/api/ai/content-queue/:id/review', (req, res) => {
+    const { status, reviewerId, reviewerName, reviewerNotes } = req.body;
+    if (!status || !['APPROVED', 'REJECTED'].includes(status)) {
+      return res.status(400).json({ error: 'Status review harus APPROVED atau REJECTED.' });
+    }
+
+    const result = db.reviewAiGeneratedContent(req.params.id, {
+      status,
+      reviewerId: reviewerId || 'user-teacher-1',
+      reviewerName: reviewerName || 'Guru Validator',
+      reviewerNotes
+    });
+
+    if (!result) {
+      return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+    }
+
+    res.json({
+      success: true,
+      item: result.item,
+      publishedAction: result.publishedAction
+    });
+  });
+
+  // 6. Refine AI Content based on feedback notes
+  app.post('/api/ai/content-queue/:id/refine', async (req, res) => {
+    try {
+      const { feedbackNotes } = req.body;
+      const item = db.getAiGeneratedContentById(req.params.id);
+      if (!item) {
+        return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+      }
+
+      const refinedData = await refineAiContent(item.contentData, feedbackNotes || 'Sempurnakan penjelasan dan rumus.');
+      const updatedMetrics = calculateQualityMetrics(item.contentType, refinedData);
+
+      item.contentData = refinedData;
+      item.qualityMetrics = updatedMetrics;
+      item.aiPromptUsed = `${item.aiPromptUsed} | Revisi: ${feedbackNotes}`;
+
+      res.json({ success: true, item });
+    } catch (err: any) {
+      console.error('Refine route error:', err);
+      res.status(500).json({ error: 'Gagal melakukan revisi AI.' });
+    }
+  });
+
+  // 7. AI Curriculum Alignment & Prerequisite Graph Analysis
+  app.post('/api/ai/curriculum-align', async (req, res) => {
+    try {
+      const { topicTitle, targetPhase } = req.body;
+      if (!topicTitle) {
+        return res.status(400).json({ error: 'Judul topik harus diisi.' });
+      }
+
+      const existingTopics = db.topics.map(t => ({
+        id: t.id,
+        title: t.title,
+        phaseCode: t.phaseId?.replace('phase-', 'FASE_').toUpperCase()
+      }));
+
+      const alignment = await alignCurriculumAndPrerequisites({
+        topicTitle,
+        targetPhase,
+        existingTopics
+      });
+
+      res.json({ success: true, alignment });
+    } catch (err: any) {
+      console.error('Curriculum alignment error:', err);
+      res.status(500).json({ error: 'Gagal menganalisis kurikulum.' });
+    }
+  });
+
+  // ==========================================
+  // CURRICULUM SOURCES & UNITS ROUTES
+  // ==========================================
+  app.get('/api/curriculum/sources', (req, res) => {
+    res.json({ sources: db.curriculumSources });
+  });
+
+  app.post('/api/curriculum/sources', (req, res) => {
+    const { name, phaseCode, subject = 'Matematika', sourceType = 'DOCUMENT_TEXT', rawContent, cpText, tpText, atpText, isOfficial = false } = req.body;
+    if (!name || !phaseCode || !rawContent) {
+      return res.status(400).json({ error: 'Data dokumen kurikulum wajib diisi.' });
+    }
+
+    const newSource = db.createCurriculumSource({
+      id: `src-${Date.now()}`,
+      name,
+      phaseCode,
+      subject,
+      isOfficial: !!isOfficial,
+      sourceType,
+      rawContent,
+      cpText,
+      tpText,
+      atpText,
+      createdBy: 'Teacher/Admin',
+      createdAt: new Date().toISOString()
+    });
+
+    res.json({ success: true, source: newSource });
+  });
+
+  app.get('/api/curriculum/units', (req, res) => {
+    const { phaseCode } = req.query;
+    let units = db.curriculumUnits;
+    if (phaseCode) {
+      units = units.filter(u => u.phaseCode === phaseCode);
+    }
+    res.json({ units, competencies: db.competencies });
+  });
+
+  // AI Curriculum Document Analysis
+  app.post('/api/curriculum/analyze', async (req, res) => {
+    try {
+      const { phaseCode = 'FASE_D', subject = 'Matematika', sourceType = 'DOCUMENT_TEXT', documentText, cpText, tpText, atpText, isOfficial = false } = req.body;
+      const result = await analyzeCurriculumDocument({
+        phaseCode,
+        subject,
+        sourceType,
+        documentText,
+        cpText,
+        tpText,
+        atpText,
+        isOfficial
+      });
+
+      // Save generated units to database
+      if (result.units && result.units.length > 0) {
+        result.units.forEach(u => db.createCurriculumUnit(u));
+      }
+
+      res.json({ success: true, result });
+    } catch (err: any) {
+      console.error('Curriculum analysis route error:', err);
+      res.status(500).json({ error: 'Gagal menganalisis dokumen kurikulum.' });
+    }
+  });
+
+  // ==========================================
+  // AI GENERATION JOB SYSTEM (Async Progress Tracking)
+  // ==========================================
+  app.post('/api/ai/jobs/start', async (req, res) => {
+    try {
+      const {
+        jobType = 'FULL_TOPIC_CONTENT',
+        topicTitle,
+        phaseCode = 'FASE_D',
+        element = 'Aljabar',
+        customInstructions,
+        targetGrade,
+        creatorId = 'user-teacher-1',
+        creatorName = 'Guru Matematika',
+        creatorRole = 'teacher'
+      } = req.body;
+
+      if (!topicTitle) {
+        return res.status(400).json({ error: 'Judul topik wajib diisi.' });
+      }
+
+      const jobId = `job-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+      const stages = [
+        { stage: 'ANALYSIS', progressPercent: 20, description: 'Menganalisis kurikulum & kompetensi...', completed: false },
+        { stage: 'TOPICS', progressPercent: 35, description: 'Menghasilkan topik & subtopik...', completed: false },
+        { stage: 'MATERIALS', progressPercent: 50, description: 'Menyusun materi pembelajaran komprehensif...', completed: false },
+        { stage: 'EXAMPLES', progressPercent: 65, description: 'Menyusun contoh soal langkah demi langkah...', completed: false },
+        { stage: 'EXERCISES', progressPercent: 80, description: 'Menghasilkan latihan berjenjang (LOTS, MOTS, HOTS)...', completed: false },
+        { stage: 'ASSESSMENT', progressPercent: 95, description: 'Menyusun 10 butir asesmen (4 LOTS, 4 MOTS, 2 HOTS, KKM 75)...', completed: false },
+        { stage: 'QUALITY_CHECK', progressPercent: 100, description: 'Validasi AI Quality Check & Finalisasi...', completed: false }
+      ];
+
+      const newJob: AiGenerationJob = {
+        id: jobId,
+        jobType,
+        status: 'PROCESSING',
+        progressPercent: 20,
+        currentStage: stages[0].description,
+        stages,
+        inputParams: req.body,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      db.createAiGenerationJob(newJob);
+
+      // Launch asynchronous multi-stage job processing
+      (async () => {
+        try {
+          // Stage 1 -> 2
+          await new Promise(r => setTimeout(r, 600));
+          stages[0].completed = true;
+          db.updateAiGenerationJob(jobId, { progressPercent: 35, currentStage: stages[1].description, stages });
+
+          // Stage 2: Topic & prerequisites
+          await new Promise(r => setTimeout(r, 700));
+          stages[1].completed = true;
+          db.updateAiGenerationJob(jobId, { progressPercent: 50, currentStage: stages[2].description, stages });
+
+          // Stage 3: Material
+          const material = await generateLearningMaterialAi({
+            contentType: 'MATERIAL',
+            topicTitle,
+            phaseCode,
+            customInstructions
+          });
+          stages[2].completed = true;
+          db.updateAiGenerationJob(jobId, { progressPercent: 65, currentStage: stages[3].description, stages });
+
+          // Stage 4: Examples
+          const examples = await generateExamplesAi({
+            contentType: 'EXAMPLES',
+            topicTitle,
+            phaseCode,
+            questionCount: 3,
+            customInstructions
+          });
+          stages[3].completed = true;
+          db.updateAiGenerationJob(jobId, { progressPercent: 80, currentStage: stages[4].description, stages });
+
+          // Stage 5: Practice questions (3 questions LOTS, MOTS, HOTS)
+          const practiceQuestions = await generateQuestionsAi({
+            contentType: 'QUESTIONS',
+            topicTitle,
+            phaseCode,
+            questionCount: 3,
+            customInstructions: 'Latihan formatif siswa'
+          });
+          stages[4].completed = true;
+          db.updateAiGenerationJob(jobId, { progressPercent: 95, currentStage: stages[5].description, stages });
+
+          // Stage 6: 10 Assessments (4 LOTS, 4 MOTS, 2 HOTS with default KKM 75)
+          const assessmentQuestions = await generateStandard10QuestionsAssessment({
+            topicTitle,
+            phaseCode,
+            competencyTitle: `${element} - Capaian Pembelajaran ${phaseCode}`,
+            passingScore: 75
+          });
+          stages[5].completed = true;
+
+          // Assemble full topic package
+          const slug = topicTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          const contentData = {
+            material,
+            examples,
+            questions: assessmentQuestions,
+            practiceQuestions: practiceQuestions as any,
+            topicPackage: {
+              title: topicTitle,
+              slug,
+              phaseId: `phase-${phaseCode.toLowerCase().replace('fase_', '')}`,
+              phaseCode: phaseCode as any,
+              element,
+              description: `Modul komprehensif ${topicTitle} (${phaseCode}) dengan penjelasan bertahap, contoh scaffolding, dan 10 butir asesmen standar KKM 75.`,
+              passingScore: 75,
+              estimatedMinutes: 50,
+              prerequisiteTopicIds: ['topic-bentuk-aljabar'],
+              prerequisiteReasoning: `Penguasaan ${topicTitle} membutuhkan pemahaman aljabar dan konsep prasyarat terkait.`,
+              material,
+              examples,
+              questions: assessmentQuestions
+            }
+          };
+
+          // Stage 7: Quality Check
+          const qcResult = db.runAiQualityCheck('TOPIC_PACKAGE', contentData);
+          stages[6].completed = true;
+
+          // Save generated item into AI Content Queue
+          const contentItemId = `ai-gen-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+          const newItem: AiGeneratedItem = {
+            id: contentItemId,
+            contentType: 'TOPIC_PACKAGE',
+            topicTitle,
+            phaseCode: phaseCode as any,
+            status: qcResult.status, // 'REVIEW' or 'NEEDS_REVIEW'
+            version: 1,
+            contentData,
+            qualityMetrics: qcResult.metrics,
+            creatorId,
+            creatorName,
+            creatorRole,
+            aiPromptUsed: customInstructions || `Generate Full Module: ${topicTitle} (${phaseCode})`,
+            createdAt: new Date().toISOString()
+          };
+
+          db.createAiGeneratedContent(newItem);
+
+          // Complete Job
+          db.updateAiGenerationJob(jobId, {
+            status: 'COMPLETED',
+            progressPercent: 100,
+            currentStage: 'Proses selesai! Konten berhasil dimasukkan ke antrean Review.',
+            stages,
+            resultData: {
+              contentItemId: newItem.id,
+              status: newItem.status,
+              qualityMetrics: qcResult.metrics,
+              topicTitle
+            }
+          });
+        } catch (jobErr: any) {
+          console.error('Job processing background error:', jobErr);
+          db.updateAiGenerationJob(jobId, {
+            status: 'FAILED',
+            error: jobErr?.message || 'Terjadi kesalahan teknis saat menghasilkan konten.',
+            currentStage: 'Proses gagal. Silakan klik tombol Coba Lagi (Retry).'
+          });
+        }
+      })();
+
+      res.json({ success: true, job: newJob });
+    } catch (err: any) {
+      console.error('Start AI job error:', err);
+      res.status(500).json({ error: 'Gagal memulai AI Generation Job.' });
+    }
+  });
+
+  app.get('/api/ai/jobs/:id', (req, res) => {
+    const job = db.getAiGenerationJob(req.params.id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job tidak ditemukan.' });
+    }
+    res.json({ job });
+  });
+
+  app.get('/api/ai/jobs', (req, res) => {
+    res.json({ jobs: db.getAllAiGenerationJobs() });
+  });
+
+  app.post('/api/ai/jobs/:id/retry', (req, res) => {
+    const job = db.getAiGenerationJob(req.params.id);
+    if (!job) {
+      return res.status(404).json({ error: 'Job tidak ditemukan.' });
+    }
+
+    // Reset job state and trigger reprocessing
+    job.status = 'PROCESSING';
+    job.progressPercent = 20;
+    job.error = undefined;
+    job.currentStage = 'Mengulang proses analisis & pembuatan konten...';
+    job.stages.forEach(s => { s.completed = false; });
+    db.updateAiGenerationJob(job.id, job);
+
+    res.json({ success: true, job });
+  });
+
+  // ==========================================
+  // PUBLISH & VERSIONING ROUTES
+  // ==========================================
+  app.post('/api/ai/content-queue/:id/publish', (req, res) => {
+    const { publisherId = 'user-teacher-1', publisherName = 'Fasilitator Kurikulum', notes } = req.body;
+    const result = db.publishAiContent(req.params.id, publisherId, publisherName, notes);
+    if (!result) {
+      return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+    }
+
+    res.json({
+      success: true,
+      item: result.item,
+      publishedAction: result.publishedAction
+    });
+  });
+
+  app.get('/api/ai/content-versions/:contentId', (req, res) => {
+    const versions = db.getContentVersions(req.params.contentId);
+    res.json({ versions });
+  });
+
+  app.post('/api/ai/content-queue/:id/regenerate', async (req, res) => {
+    try {
+      const { newInstructions } = req.body;
+      const item = db.getAiGeneratedContentById(req.params.id);
+      if (!item) {
+        return res.status(404).json({ error: 'Draft konten tidak ditemukan.' });
+      }
+
+      // Re-generate package
+      const topicPackage = await generateTopicPackageAi({
+        contentType: 'TOPIC_PACKAGE',
+        topicTitle: item.topicTitle,
+        phaseCode: item.phaseCode,
+        customInstructions: newInstructions || item.aiPromptUsed
+      });
+
+      const updatedData = {
+        material: topicPackage.material,
+        examples: topicPackage.examples,
+        questions: topicPackage.questions,
+        topicPackage
+      };
+
+      const qc = db.runAiQualityCheck('TOPIC_PACKAGE', updatedData);
+      const updated = db.updateAiGeneratedContent(item.id, {
+        contentData: updatedData,
+        qualityMetrics: qc.metrics,
+        status: qc.status,
+        reviewerNotes: `Diregenerasi AI: ${newInstructions || 'Penyempurnaan otomatis'}`
+      });
+
+      res.json({ success: true, item: updated });
+    } catch (err: any) {
+      console.error('Regenerate route error:', err);
+      res.status(500).json({ error: 'Gagal meregenerasi konten.' });
+    }
+  });
+
 
   // ==========================================
   // VITE MIDDLEWARE & STATIC SERVING

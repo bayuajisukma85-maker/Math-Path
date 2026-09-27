@@ -113,6 +113,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                   Kelas & Siswa
                 </button>
                 <button
+                  onClick={() => onNavigate('teacher-ai-curriculum')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    currentView === 'teacher-ai-curriculum'
+                      ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  AI Kurikulum
+                </button>
+                <button
                   onClick={() => onNavigate('teacher-security')}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
                     currentView === 'teacher-security'
@@ -138,6 +149,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <Settings className="w-4 h-4" />
                   Kurikulum & KKM
+                </button>
+                <button
+                  onClick={() => onNavigate('admin-ai-curriculum')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                    currentView === 'admin-ai-curriculum'
+                      ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  AI Kurikulum Engine
                 </button>
               </>
             )}

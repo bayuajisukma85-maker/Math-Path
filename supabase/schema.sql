@@ -345,3 +345,171 @@ CREATE POLICY "Students see own remedial" ON public.remedial_paths FOR SELECT US
 -- Assessment attempts & security events
 CREATE POLICY "Student read own attempts" ON public.assessment_attempts FOR SELECT USING (auth.uid() = user_id OR public.current_user_role() IN ('teacher', 'admin'));
 CREATE POLICY "Teacher review security events" ON public.assessment_security_events FOR ALL USING (auth.uid() = user_id OR public.current_user_role() IN ('teacher', 'admin'));
+
+-- ===================================================================
+-- 21. AI GENERATED CONTENT & REVIEW QUEUE (ADDITIVE)
+-- ===================================================================
+CREATE TABLE IF NOT EXISTS public.ai_generated_content (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_type TEXT NOT NULL CHECK (content_type IN ('MATERIAL', 'EXAMPLES', 'QUESTIONS', 'TOPIC_PACKAGE', 'CURRICULUM_PLAN')),
+    topic_id UUID REFERENCES public.topics(id) ON DELETE SET NULL,
+    topic_title TEXT NOT NULL,
+    phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
+    status TEXT NOT NULL CHECK (status IN ('DRAFT', 'REVIEW', 'PENDING_REVIEW', 'NEEDS_REVIEW', 'APPROVED', 'PUBLISHED', 'REJECTED')) DEFAULT 'PENDING_REVIEW',
+    version INT NOT NULL DEFAULT 1,
+    content_data JSONB NOT NULL,
+    quality_metrics JSONB NOT NULL,
+    creator_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    creator_name TEXT NOT NULL,
+    creator_role TEXT NOT NULL,
+    reviewer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    reviewer_name TEXT,
+    reviewer_notes TEXT,
+    ai_prompt_used TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    reviewed_at TIMESTAMPTZ,
+    published_at TIMESTAMPTZ
+);
+
+CREATE INDEX IF NOT EXISTS idx_ai_content_status ON public.ai_generated_content(status);
+CREATE INDEX IF NOT EXISTS idx_ai_content_type ON public.ai_generated_content(content_type);
+CREATE INDEX IF NOT EXISTS idx_ai_content_phase ON public.ai_generated_content(phase_code);
+
+ALTER TABLE public.ai_generated_content ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Teachers and admin manage AI content" ON public.ai_generated_content FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+CREATE POLICY "Students read approved materials from AI content" ON public.ai_generated_content FOR SELECT USING (status = 'PUBLISHED' OR status = 'APPROVED');
+
+-- 22. CURRICULUM SOURCES (Dokumen/Input Kurikulum Guru & Admin)
+CREATE TABLE IF NOT EXISTS public.curriculum_sources (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name TEXT NOT NULL,
+    phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
+    subject TEXT NOT NULL DEFAULT 'Matematika',
+    is_official BOOLEAN NOT NULL DEFAULT FALSE,
+    source_type TEXT NOT NULL CHECK (source_type IN ('DOCUMENT_TEXT', 'CP_TP_ATP', 'MANUAL_ENTRY', 'SYNTHESIS')),
+    raw_content TEXT NOT NULL,
+    cp_text TEXT,
+    tp_text TEXT,
+    atp_text TEXT,
+    created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.curriculum_sources ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Teachers and admin manage curriculum sources" ON public.curriculum_sources FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+CREATE POLICY "Public read curriculum sources" ON public.curriculum_sources FOR SELECT USING (true);
+
+-- 23. COMPETENCIES
+CREATE TABLE IF NOT EXISTS public.competencies (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    code TEXT NOT NULL UNIQUE,
+    element TEXT NOT NULL, -- Bilangan, Aljabar, Pengukuran, Geometri, Analisis Data dan Peluang, Kalkulus
+    title TEXT NOT NULL,
+    description TEXT,
+    cognitive_level TEXT NOT NULL CHECK (cognitive_level IN ('LOTS', 'MOTS', 'HOTS')) DEFAULT 'MOTS',
+    phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
+    order_index INT NOT NULL DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.competencies ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone read competencies" ON public.competencies FOR SELECT USING (true);
+CREATE POLICY "Admin manage competencies" ON public.competencies FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+
+-- 24. CURRICULUM UNITS (Fase, Elemen, CP, TP, ATP, Topik, Prasyarat)
+CREATE TABLE IF NOT EXISTS public.curriculum_units (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    source_id UUID REFERENCES public.curriculum_sources(id) ON DELETE SET NULL,
+    phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
+    element TEXT NOT NULL,
+    cp TEXT NOT NULL,
+    tp TEXT NOT NULL,
+    atp TEXT NOT NULL,
+    topic_title TEXT NOT NULL,
+    subtopics JSONB NOT NULL DEFAULT '[]'::jsonb,
+    competencies JSONB NOT NULL DEFAULT '[]'::jsonb,
+    prerequisites JSONB NOT NULL DEFAULT '[]'::jsonb,
+    learning_sequence INT NOT NULL DEFAULT 1,
+    is_official_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.curriculum_units ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone read curriculum units" ON public.curriculum_units FOR SELECT USING (true);
+CREATE POLICY "Teachers and admin manage curriculum units" ON public.curriculum_units FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+
+-- 25. PRACTICE QUESTIONS (Latihan bertingkat LOTS, MOTS, HOTS)
+CREATE TABLE IF NOT EXISTS public.practice_questions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
+    subtopic_id UUID REFERENCES public.subtopics(id) ON DELETE SET NULL,
+    competency_id UUID REFERENCES public.competencies(id) ON DELETE SET NULL,
+    question_text TEXT NOT NULL,
+    math_expression TEXT,
+    question_type TEXT NOT NULL DEFAULT 'multiple_choice',
+    options JSONB NOT NULL,
+    correct_answer JSONB NOT NULL,
+    explanation TEXT NOT NULL,
+    difficulty TEXT NOT NULL CHECK (difficulty IN ('LOTS', 'MOTS', 'HOTS')),
+    estimated_time_seconds INT DEFAULT 90,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.practice_questions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone read practice questions" ON public.practice_questions FOR SELECT USING (true);
+CREATE POLICY "Teachers and admin manage practice questions" ON public.practice_questions FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+
+-- 26. AI GENERATION JOBS (Proses generator asinkron & progress tracking)
+CREATE TABLE IF NOT EXISTS public.ai_generation_jobs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    job_type TEXT NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED')) DEFAULT 'PENDING',
+    progress_percent INT NOT NULL DEFAULT 0,
+    current_stage TEXT NOT NULL DEFAULT 'Memulai proses...',
+    stages JSONB NOT NULL DEFAULT '[]'::jsonb,
+    input_params JSONB NOT NULL DEFAULT '{}'::jsonb,
+    result_data JSONB,
+    error_message TEXT,
+    created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.ai_generation_jobs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Teachers and admin manage generation jobs" ON public.ai_generation_jobs FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+
+-- 27. CONTENT REVIEWS (Audit trail persetujuan konten)
+CREATE TABLE IF NOT EXISTS public.content_reviews (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_id UUID NOT NULL REFERENCES public.ai_generated_content(id) ON DELETE CASCADE,
+    version_number INT NOT NULL DEFAULT 1,
+    reviewer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    reviewer_name TEXT NOT NULL,
+    reviewer_role TEXT NOT NULL,
+    action TEXT NOT NULL CHECK (action IN ('APPROVE', 'REJECT', 'PUBLISH', 'REQUEST_CHANGES', 'REGENERATE')),
+    notes TEXT,
+    quality_checklist JSONB,
+    reviewed_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.content_reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Teachers and admin manage reviews" ON public.content_reviews FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+
+-- 28. CONTENT VERSIONS (Versioning: v1, v2, v3 agar perubahan published terkontrol)
+CREATE TABLE IF NOT EXISTS public.content_versions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_id UUID NOT NULL REFERENCES public.ai_generated_content(id) ON DELETE CASCADE,
+    version_number INT NOT NULL DEFAULT 1,
+    title TEXT NOT NULL,
+    content_type TEXT NOT NULL,
+    content_data JSONB NOT NULL,
+    created_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    creator_role TEXT NOT NULL,
+    change_summary TEXT NOT NULL,
+    is_published BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.content_versions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Teachers and admin manage content versions" ON public.content_versions FOR ALL USING (public.current_user_role() IN ('teacher', 'admin'));
+

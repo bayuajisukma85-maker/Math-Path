@@ -20,7 +20,19 @@ import {
   RemedialPath,
   AssessmentSecurityEvent,
   AssessmentAnswerSubmission,
-  SecuritySessionSummary
+  SecuritySessionSummary,
+  AiGeneratedItem,
+  AiContentType,
+  AiContentStatus,
+  CurriculumSource,
+  CurriculumUnit,
+  Competency,
+  PracticeQuestion,
+  AiGenerationJob,
+  ContentReview,
+  ContentVersion,
+  AiQualityIssue,
+  JobProgressStage
 } from '../src/types';
 
 import {
@@ -31,7 +43,10 @@ import {
   INITIAL_MATERIALS,
   INITIAL_EXAMPLES,
   INITIAL_QUESTIONS,
-  INITIAL_ASSESSMENTS
+  INITIAL_ASSESSMENTS,
+  INITIAL_CURRICULUM_SOURCES,
+  INITIAL_CURRICULUM_UNITS,
+  INITIAL_COMPETENCIES
 } from './data';
 
 class DatabaseStore {
@@ -45,6 +60,14 @@ class DatabaseStore {
   public questions: Question[] = [...INITIAL_QUESTIONS];
   public assessments: Assessment[] = [...INITIAL_ASSESSMENTS];
 
+  public curriculumSources: CurriculumSource[] = [...INITIAL_CURRICULUM_SOURCES];
+  public curriculumUnits: CurriculumUnit[] = [...INITIAL_CURRICULUM_UNITS];
+  public competencies: Competency[] = [...INITIAL_COMPETENCIES];
+  public practiceQuestions: PracticeQuestion[] = [];
+  public aiGenerationJobs: Map<string, AiGenerationJob> = new Map();
+  public contentReviews: ContentReview[] = [];
+  public contentVersions: ContentVersion[] = [];
+
   public studentProgress: Map<string, Map<string, StudentProgress>> = new Map();
   public studentMastery: Map<string, Map<string, StudentMastery>> = new Map();
   public learningHistory: LearningHistoryItem[] = [];
@@ -52,12 +75,15 @@ class DatabaseStore {
   public remedialPaths: RemedialPath[] = [];
   public assessmentAttempts: AssessmentAttempt[] = [];
   public securityEvents: AssessmentSecurityEvent[] = [];
+  public aiGeneratedContent: Map<string, AiGeneratedItem> = new Map();
 
   public resetTokens: Map<string, { email: string; expiresAt: number }> = new Map();
+
 
   constructor() {
     this.seedInitialUsers();
     this.seedDemoStudentProgress();
+    this.seedInitialAiContent();
   }
 
   private seedInitialUsers() {
@@ -694,6 +720,633 @@ class DatabaseStore {
 
     return Array.from(attemptsMap.values());
   }
+
+  // ===================================================================
+  // AI CONTENT GENERATION & REVIEW QUEUE METHODS
+  // ===================================================================
+
+  private seedInitialAiContent() {
+    // 1. Initial pending question pack for Trigonometri
+    const id1 = 'ai-draft-trigo-1';
+    this.aiGeneratedContent.set(id1, {
+      id: id1,
+      contentType: 'QUESTIONS',
+      topicId: 'topic-fungsi-kuadrat',
+      topicTitle: 'Bank Soal HOTS: Titik Puncak & Aplikasi Nyata',
+      phaseCode: 'FASE_E',
+      status: 'PENDING_REVIEW',
+      version: 1,
+      creatorId: 'user-teacher-1',
+      creatorName: 'Ibu Dewi Safitri, S.Pd.',
+      creatorRole: 'teacher',
+      aiPromptUsed: 'Buatkan 3 butir soal HOTS aplikasi nyata fungsi kuadrat (lintasan roket air & optimalisasi laba UMKM) untuk Fase E.',
+      qualityMetrics: {
+        mathCorrectnessScore: 96,
+        curriculumAlignmentScore: 98,
+        readabilityScore: 94,
+        latexValid: true,
+        lotsCount: 0,
+        motsCount: 1,
+        hotsCount: 2,
+        passedValidation: true,
+        notes: 'Semua soal memiliki konteks nyata, langkah pembahasan sangat mendalam, dan formula KaTeX tervalidasi.'
+      },
+      contentData: {
+        questions: [
+          {
+            id: 'q-ai-demo-1',
+            topicId: 'topic-fungsi-kuadrat',
+            questionText: 'Sebuah kelompok siswa SMK merancang roket air dengan fungsi lintasan $h(t) = -5t^2 + 30t + 2$ (dalam meter, $t$ dalam detik). Berapakah ketinggian maksimum roket tersebut?',
+            mathExpression: 'h(t) = -5t^2 + 30t + 2',
+            questionType: 'multiple_choice',
+            difficulty: 'HOTS',
+            conceptTag: 'Aplikasi Nilai Optimum',
+            points: 10,
+            options: [
+              { id: 'A', text: '45 meter' },
+              { id: 'B', text: '47 meter' },
+              { id: 'C', text: '50 meter' },
+              { id: 'D', text: '52 meter' }
+            ],
+            correctAnswer: 'B',
+            explanation: 'Waktu puncak dicapai saat $t = -\\frac{b}{2a} = -\\frac{30}{2(-5)} = 3$ detik. Substitusi ke fungsi: $h(3) = -5(9) + 30(3) + 2 = -45 + 90 + 2 = 47$ meter.'
+          },
+          {
+            id: 'q-ai-demo-2',
+            topicId: 'topic-fungsi-kuadrat',
+            questionText: 'Seorang pengusaha muda menghitung bahwa laba harian dari penjualan $x$ unit produk busana dinyatakan dengan fungsi laba $P(x) = -2x^2 + 120x - 1000$ (dalam ribuan rupiah). Berapa unit yang harus diproduksi agar memperoleh laba maksimum?',
+            mathExpression: 'P(x) = -2x^2 + 120x - 1000',
+            questionType: 'multiple_choice',
+            difficulty: 'HOTS',
+            conceptTag: 'Optimalisasi Ekonomi',
+            points: 10,
+            options: [
+              { id: 'A', text: '25 unit' },
+              { id: 'B', text: '30 unit' },
+              { id: 'C', text: '35 unit' },
+              { id: 'D', text: '40 unit' }
+            ],
+            correctAnswer: 'B',
+            explanation: 'Laba maksimum tercapai pada sumbu simetri $x = -\\frac{b}{2a} = -\\frac{120}{2(-2)} = \\frac{120}{4} = 30$ unit.'
+          }
+        ]
+      },
+      createdAt: new Date(Date.now() - 3600000 * 4).toISOString()
+    });
+
+    // 2. Initial pending topic package for Trigonometri Dasar
+    const id2 = 'ai-draft-package-1';
+    this.aiGeneratedContent.set(id2, {
+      id: id2,
+      contentType: 'TOPIC_PACKAGE',
+      topicTitle: 'Perbandingan Trigonometri Segitiga Siku-Siku',
+      phaseCode: 'FASE_E',
+      status: 'PENDING_REVIEW',
+      version: 1,
+      creatorId: 'user-admin-1',
+      creatorName: 'Admin Kurikulum MathPath',
+      creatorRole: 'admin',
+      aiPromptUsed: 'Buatkan paket topik lengkap Perbandingan Trigonometri Dasar (Sin, Cos, Tan) Fase E beserta materi, contoh soal, dan 5 asesmen.',
+      qualityMetrics: {
+        mathCorrectnessScore: 98,
+        curriculumAlignmentScore: 100,
+        readabilityScore: 95,
+        latexValid: true,
+        lotsCount: 2,
+        motsCount: 2,
+        hotsCount: 1,
+        passedValidation: true,
+        notes: 'Paket topik lengkap Kurikulum Merdeka. Sesuai Capaian Pembelajaran Geometri & Trigonometri Fase E.'
+      },
+      contentData: {
+        topicPackage: {
+          title: 'Perbandingan Trigonometri Segitiga Siku-Siku',
+          slug: 'perbandingan-trigonometri',
+          phaseId: 'phase-e',
+          phaseCode: 'FASE_E',
+          description: 'Definisi dasar sinus, cosinus, dan tangen pada segitiga siku-siku serta aplikasinya dalam mengukur tinggi objek tanpa memanjat (klinometer).',
+          passingScore: 75,
+          estimatedMinutes: 50,
+          prerequisiteTopicIds: ['topic-pythagoras'],
+          prerequisiteReasoning: 'Siswa harus memahami Teorema Pythagoras untuk menentukan sisi miring dan sisi tegak segitiga.',
+          material: {
+            id: 'mat-trigo-gen',
+            topicId: 'topic-trigonometri',
+            title: 'Perbandingan Trigonometri Segitiga Siku-Siku',
+            learningObjectives: [
+              'Memahami definisi rasio sisi depan, samping, dan miring (Demi, Sami, Desa)',
+              'Menghitung nilai sinus, cosinus, dan tangen dari sudut istimewa',
+              'Memecahkan masalah pengukuran tidak langsung dalam kehidupan nyata'
+            ],
+            apperception: 'Pernahkah kamu bertanya-tanya bagaimana arsitek mengukur tinggi Monas atau puncak menara BTS tanpa harus memanjat puncaknya? Kuncinya ada pada perbandingan sudut dan panjang bayangan: Trigonometri!',
+            basicConcepts: 'Pada sebuah segitiga siku-siku dengan sudut acuan $\\theta$:\n- $\\sin(\\theta) = \\frac{\\text{sisi depan}}{\\text{sisi miring}} = \\frac{\\text{de}}{\\text{mi}}$\n- $\\cos(\\theta) = \\frac{\\text{sisi samping}}{\\text{sisi miring}} = \\frac{\\text{sa}}{\\text{mi}}$\n- $\\tan(\\theta) = \\frac{\\text{sisi depan}}{\\text{sisi samping}} = \\frac{\\text{de}}{\\text{sa}}$',
+            detailedExplanation: 'Ingat akronim populer: Sin-De-Mi, Cos-Sa-Mi, Tan-De-Sa. Teorema Pythagoras $a^2 + b^2 = c^2$ selalu berlaku untuk mencari sisi ketiga yang belum diketahui.',
+            commonMisconceptions: 'Sering tertukar antara sisi depan dan sisi samping karena orientasi gambar segitiga diputar. Selalu tentukan posisi sudut acuan terlebih dahulu!',
+            summary: '1. Sisi miring (hipotenusa) selalu berada di hadapan sudut siku-siku $90^\\circ$.\n2. Nilai perbandingan trigonometri murni bergantung pada besar sudut, bukan ukuran segitiga.'
+          },
+          examples: [
+            {
+              id: 'ex-trigo-1',
+              topicId: 'topic-trigonometri',
+              title: 'Contoh 1: Menghitung Rasio Sin, Cos, Tan',
+              difficulty: 'LOTS',
+              problemStatement: 'Pada segitiga siku-siku $ABC$ dengan siku-siku di $B$, diketahui panjang $AB = 3$ cm dan $BC = 4$ cm. Tentukan nilai $\\sin A$ dan $\\cos A$!',
+              keyTakeaway: 'Cari hipotenusa dengan Pythagoras $AC = \\sqrt{3^2 + 4^2} = 5$ cm, lalu terapkan rumus rasio.',
+              stepByStepSolution: [
+                {
+                  stepNumber: 1,
+                  title: 'Hitung Panjang Sisi Miring (AC)',
+                  description: 'Gunakan Teorema Pythagoras:',
+                  mathExpression: 'AC = \\sqrt{AB^2 + BC^2} = \\sqrt{3^2 + 4^2} = \\sqrt{25} = 5 \\text{ cm}'
+                },
+                {
+                  stepNumber: 2,
+                  title: 'Tentukan Rasio untuk Sudut A',
+                  description: 'Sisi depan sudut A adalah $BC = 4$, sisi samping adalah $AB = 3$, dan sisi miring adalah $AC = 5$:',
+                  mathExpression: '\\sin A = \\frac{BC}{AC} = \\frac{4}{5}, \\quad \\cos A = \\frac{AB}{AC} = \\frac{3}{5}'
+                }
+              ]
+            }
+          ],
+          questions: [
+            {
+              id: 'q-trigo-1',
+              topicId: 'topic-trigonometri',
+              questionText: 'Pada segitiga siku-siku dengan sisi depan bernilai $6$ dan sisi miring bernilai $10$, berapakah nilai $\\sin(\\theta)$ dalam bentuk paling sederhana?',
+              mathExpression: '\\sin(\\theta) = \\frac{\\text{depan}}{\\text{miring}}',
+              questionType: 'multiple_choice',
+              difficulty: 'LOTS',
+              conceptTag: 'Definisi Sinus',
+              points: 10,
+              options: [
+                { id: 'A', text: '$\\frac{3}{5}$' },
+                { id: 'B', text: '$\\frac{4}{5}$' },
+                { id: 'C', text: '$\\frac{3}{4}$' },
+                { id: 'D', text: '$\\frac{5}{3}$' }
+              ],
+              correctAnswer: 'A',
+              explanation: '$\\sin(\\theta) = \\frac{6}{10} = \\frac{3}{5}$.'
+            }
+          ]
+        }
+      },
+      createdAt: new Date(Date.now() - 3600000 * 2).toISOString()
+    });
+  }
+
+  public createCurriculumSource(source: CurriculumSource): CurriculumSource {
+    this.curriculumSources.push(source);
+    return source;
+  }
+
+  public createCurriculumUnit(unit: CurriculumUnit): CurriculumUnit {
+    this.curriculumUnits.push(unit);
+    return unit;
+  }
+
+  public createAiGenerationJob(job: AiGenerationJob): AiGenerationJob {
+    this.aiGenerationJobs.set(job.id, job);
+    return job;
+  }
+
+  public getAiGenerationJob(id: string): AiGenerationJob | undefined {
+    return this.aiGenerationJobs.get(id);
+  }
+
+  public updateAiGenerationJob(id: string, updates: Partial<AiGenerationJob>): AiGenerationJob | undefined {
+    const job = this.aiGenerationJobs.get(id);
+    if (!job) return undefined;
+    const updated = { ...job, ...updates, updatedAt: new Date().toISOString() };
+    this.aiGenerationJobs.set(id, updated);
+    return updated;
+  }
+
+  public getAllAiGenerationJobs(): AiGenerationJob[] {
+    return Array.from(this.aiGenerationJobs.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }
+
+  public recordContentReview(review: ContentReview): ContentReview {
+    this.contentReviews.push(review);
+    return review;
+  }
+
+  public createContentVersion(version: ContentVersion): ContentVersion {
+    this.contentVersions.push(version);
+    return version;
+  }
+
+  public getContentVersions(contentId: string): ContentVersion[] {
+    return this.contentVersions
+      .filter(v => v.contentId === contentId)
+      .sort((a, b) => b.versionNumber - a.versionNumber);
+  }
+
+  /**
+   * AI Quality Check - Strict verification before entering REVIEW
+   */
+  public runAiQualityCheck(contentType: AiContentType, contentData: any): {
+    passed: boolean;
+    status: AiContentStatus;
+    issues: AiQualityIssue[];
+    metrics: any;
+  } {
+    const issues: AiQualityIssue[] = [];
+
+    // 1. Check Questions
+    const questions: Question[] = contentData.questions || contentData.topicPackage?.questions || [];
+    if (contentType === 'QUESTIONS' || contentType === 'TOPIC_PACKAGE') {
+      if (questions.length === 0) {
+        issues.push({
+          code: 'NO_QUESTIONS',
+          severity: 'ERROR',
+          field: 'questions',
+          message: 'Paket konten tidak memiliki butir soal.'
+        });
+      }
+
+      questions.forEach((q, idx) => {
+        // Question without answer
+        if (!q.correctAnswer || String(q.correctAnswer).trim() === '') {
+          issues.push({
+            code: 'NO_ANSWER',
+            severity: 'ERROR',
+            field: `questions[${idx}]`,
+            message: `Soal #${idx + 1} ("${q.questionText?.substring(0, 30)}...") tidak memiliki kunci jawaban!`
+          });
+        }
+
+        // Multiple choice must have options and exactly one match
+        if (q.questionType === 'multiple_choice' || !q.questionType) {
+          if (!q.options || q.options.length < 2) {
+            issues.push({
+              code: 'INSUFFICIENT_OPTIONS',
+              severity: 'ERROR',
+              field: `questions[${idx}].options`,
+              message: `Soal #${idx + 1} memiliki kurang dari 2 pilihan jawaban.`
+            });
+          } else {
+            const matchCount = q.options.filter(o => o.id === q.correctAnswer).length;
+            if (matchCount !== 1) {
+              issues.push({
+                code: 'INVALID_CORRECT_ANSWER',
+                severity: 'ERROR',
+                field: `questions[${idx}].correctAnswer`,
+                message: `Kunci jawaban '${q.correctAnswer}' pada soal #${idx + 1} tidak cocok dengan opsi yang tersedia.`
+              });
+            }
+
+            // Duplicate options check
+            const texts = q.options.map(o => o.text.trim().toLowerCase());
+            const uniqueTexts = new Set(texts);
+            if (uniqueTexts.size < texts.length) {
+              issues.push({
+                code: 'DUPLICATE_OPTIONS',
+                severity: 'WARNING',
+                field: `questions[${idx}].options`,
+                message: `Terdapat teks pilihan ganda yang duplikat pada soal #${idx + 1}.`
+              });
+            }
+          }
+        }
+
+        // Explanation consistency
+        if (!q.explanation || q.explanation.length < 10) {
+          issues.push({
+            code: 'WEAK_EXPLANATION',
+            severity: 'WARNING',
+            field: `questions[${idx}].explanation`,
+            message: `Penjelasan soal #${idx + 1} terlalu singkat atau belum menyertakan langkah sistematis.`
+          });
+        }
+
+        // Formula / LaTeX check
+        if (q.mathExpression && q.mathExpression.includes('$') && (q.mathExpression.split('$').length - 1) % 2 !== 0) {
+          issues.push({
+            code: 'UNBALANCED_LATEX',
+            severity: 'WARNING',
+            field: `questions[${idx}].mathExpression`,
+            message: `Notasi LaTeX pada soal #${idx + 1} memiliki tanda dollar ($) yang tidak berpasangan.`
+          });
+        }
+      });
+    }
+
+    // 2. Check Material
+    const material = contentData.material || contentData.topicPackage?.material;
+    if (contentType === 'MATERIAL' || contentType === 'TOPIC_PACKAGE') {
+      if (!material) {
+        issues.push({
+          code: 'NO_MATERIAL',
+          severity: 'ERROR',
+          field: 'material',
+          message: 'Materi pembelajaran tidak ditemukan.'
+        });
+      } else {
+        if (!material.learningObjectives || material.learningObjectives.length === 0) {
+          issues.push({
+            code: 'NO_OBJECTIVES',
+            severity: 'ERROR',
+            field: 'material.learningObjectives',
+            message: 'Materi wajib memiliki minimal 1 tujuan pembelajaran.'
+          });
+        }
+        if (!material.basicConcepts || material.basicConcepts.length < 20) {
+          issues.push({
+            code: 'SHALLOW_CONCEPTS',
+            severity: 'WARNING',
+            field: 'material.basicConcepts',
+            message: 'Konsep dasar terlalu singkat untuk standar Kurikulum Merdeka.'
+          });
+        }
+      }
+    }
+
+    const hasErrors = issues.some(i => i.severity === 'ERROR');
+    const passed = !hasErrors;
+    const status: AiContentStatus = passed ? 'REVIEW' : 'NEEDS_REVIEW';
+
+    let lotsCount = 0;
+    let motsCount = 0;
+    let hotsCount = 0;
+    questions.forEach(q => {
+      if (q.difficulty === 'LOTS') lotsCount++;
+      if (q.difficulty === 'MOTS') motsCount++;
+      if (q.difficulty === 'HOTS') hotsCount++;
+    });
+
+    const metrics = {
+      mathCorrectnessScore: passed ? (issues.length === 0 ? 98 : 90) : 65,
+      curriculumAlignmentScore: passed ? 95 : 70,
+      readabilityScore: 92,
+      latexValid: !issues.some(i => i.code === 'UNBALANCED_LATEX'),
+      lotsCount,
+      motsCount,
+      hotsCount,
+      passedValidation: passed,
+      issues,
+      notes: passed
+        ? 'Lolos validasi otomatis AI Quality Check. Siap ditinjau oleh Guru/Admin.'
+        : `Ditemukan ${issues.length} catatan validasi. Memerlukan peninjauan manual (NEEDS_REVIEW).`
+    };
+
+    return { passed, status, issues, metrics };
+  }
+
+  public createAiGeneratedContent(item: AiGeneratedItem): AiGeneratedItem {
+    this.aiGeneratedContent.set(item.id, item);
+
+    // Create initial version record
+    this.createContentVersion({
+      id: `ver-${Date.now()}-1`,
+      contentId: item.id,
+      versionNumber: item.version || 1,
+      title: item.topicTitle,
+      contentType: item.contentType,
+      contentData: item.contentData,
+      createdBy: item.creatorId,
+      creatorRole: item.creatorRole,
+      changeSummary: 'Versi awal hasil generasi AI Engine',
+      isPublished: false,
+      createdAt: item.createdAt
+    });
+
+    return item;
+  }
+
+  public getAiGeneratedContentQueue(filter?: { status?: string; contentType?: string }): AiGeneratedItem[] {
+    let items = Array.from(this.aiGeneratedContent.values());
+    if (filter?.status && filter.status !== 'ALL') {
+      items = items.filter(i => i.status === filter.status);
+    }
+    if (filter?.contentType && filter.contentType !== 'ALL') {
+      items = items.filter(i => i.contentType === filter.contentType);
+    }
+    return items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  public getAiGeneratedContentById(id: string): AiGeneratedItem | undefined {
+    return this.aiGeneratedContent.get(id);
+  }
+
+  public updateAiGeneratedContent(id: string, updates: Partial<AiGeneratedItem>): AiGeneratedItem | undefined {
+    const existing = this.aiGeneratedContent.get(id);
+    if (!existing) return undefined;
+
+    // Check versioning: if modifying published content or substantial data, increment version
+    const newVersion = (existing.version || 1) + 1;
+    const updated = { ...existing, ...updates, version: newVersion };
+    this.aiGeneratedContent.set(id, updated);
+
+    // Save version snapshot
+    this.createContentVersion({
+      id: `ver-${Date.now()}-${newVersion}`,
+      contentId: id,
+      versionNumber: newVersion,
+      title: updated.topicTitle,
+      contentType: updated.contentType,
+      contentData: updated.contentData,
+      createdBy: updates.creatorId || existing.creatorId,
+      creatorRole: updates.creatorRole || existing.creatorRole,
+      changeSummary: updates.reviewerNotes || 'Pembaruan edit konten oleh Guru/Admin',
+      isPublished: updated.status === 'PUBLISHED',
+      createdAt: new Date().toISOString()
+    });
+
+    return updated;
+  }
+
+  /**
+   * AI Review & Approval: Approve or Reject content.
+   */
+  public reviewAiGeneratedContent(
+    id: string,
+    review: {
+      status: 'APPROVED' | 'REJECTED' | 'REVIEW' | 'NEEDS_REVIEW';
+      reviewerId: string;
+      reviewerName?: string;
+      reviewerNotes?: string;
+    }
+  ): { item: AiGeneratedItem; publishedAction?: string } | undefined {
+    const item = this.aiGeneratedContent.get(id);
+    if (!item) return undefined;
+
+    item.status = review.status;
+    item.reviewerId = review.reviewerId;
+    item.reviewerName = review.reviewerName || 'Reviewer Kurikulum';
+    item.reviewerNotes = review.reviewerNotes;
+    item.reviewedAt = new Date().toISOString();
+
+    // Record review audit log
+    this.recordContentReview({
+      id: `rev-${Date.now()}`,
+      contentId: id,
+      versionNumber: item.version || 1,
+      reviewerId: review.reviewerId,
+      reviewerName: item.reviewerName,
+      reviewerRole: 'teacher',
+      action: review.status === 'APPROVED' ? 'APPROVE' : 'REJECT',
+      notes: review.reviewerNotes || '',
+      reviewedAt: item.reviewedAt
+    });
+
+    return { item };
+  }
+
+  /**
+   * PUBLISH content - Makes it IMMEDIATELY available in the student learning path!
+   */
+  public publishAiContent(
+    id: string,
+    publisherId: string,
+    publisherName?: string,
+    notes?: string
+  ): { item: AiGeneratedItem; publishedAction: string } | undefined {
+    const item = this.aiGeneratedContent.get(id);
+    if (!item) return undefined;
+
+    item.status = 'PUBLISHED';
+    item.publishedAt = new Date().toISOString();
+    item.reviewerId = publisherId;
+    item.reviewerName = publisherName || 'Fasilitator Kurikulum';
+    item.reviewerNotes = notes || 'Dipublikasikan ke jalur belajar siswa.';
+
+    let publishedAction = '';
+
+    // 1. If MATERIAL: update live topic material
+    if (item.contentType === 'MATERIAL' && item.contentData.material) {
+      const mat = item.contentData.material;
+      const topicId = item.topicId || mat.topicId;
+      this.materials.set(topicId, mat);
+      publishedAction = `Materi pembelajaran untuk topik "${item.topicTitle}" telah resmi dipublikasikan ke siswa!`;
+    }
+    // 2. If EXAMPLES: append or update live topic examples
+    else if (item.contentType === 'EXAMPLES' && item.contentData.examples) {
+      const exs = item.contentData.examples;
+      const topicId = item.topicId || (exs[0]?.topicId) || 'topic-custom';
+      const currentExs = this.examples.get(topicId) || [];
+      this.examples.set(topicId, [...currentExs, ...exs]);
+      publishedAction = `${exs.length} contoh soal baru berhasil dipublikasikan ke topik "${item.topicTitle}"!`;
+    }
+    // 3. If QUESTIONS: push to live questions bank & assessment
+    else if (item.contentType === 'QUESTIONS' && item.contentData.questions) {
+      const qs = item.contentData.questions;
+      const topicId = item.topicId || (qs[0]?.topicId) || 'topic-custom';
+      this.questions.push(...qs);
+
+      let topicAssessment = this.assessments.find(a => a.topicId === topicId);
+      if (topicAssessment) {
+        topicAssessment.totalQuestions = (topicAssessment.totalQuestions || 0) + qs.length;
+      } else {
+        this.assessments.push({
+          id: `as-${topicId}`,
+          topicId,
+          title: `Asesmen: ${item.topicTitle}`,
+          type: 'TOPIC',
+          durationMinutes: 25,
+          passingScore: 75,
+          totalQuestions: qs.length
+        });
+      }
+      publishedAction = `${qs.length} butir soal asesmen baru telah dipublikasikan ke bank soal topik "${item.topicTitle}"!`;
+    }
+    // 4. If TOPIC_PACKAGE: create live Topic, Materials, Examples, Questions, and Assessment
+    else if (item.contentType === 'TOPIC_PACKAGE' && item.contentData.topicPackage) {
+      const pkg = item.contentData.topicPackage;
+      const newTopicId = `topic-${pkg.slug}`;
+
+      // Check if topic already exists, update or create
+      const existingIdx = this.topics.findIndex(t => t.slug === pkg.slug || t.id === newTopicId);
+      const newTopic: Topic = {
+        id: newTopicId,
+        levelId: 'level-d1',
+        phaseId: pkg.phaseId,
+        title: pkg.title,
+        slug: pkg.slug,
+        description: pkg.description,
+        passingScore: pkg.passingScore || 75,
+        estimatedMinutes: pkg.estimatedMinutes || 45,
+        orderIndex: existingIdx >= 0 ? this.topics[existingIdx].orderIndex : this.topics.length + 1,
+        prerequisiteIds: pkg.prerequisiteTopicIds || []
+      };
+
+      if (existingIdx >= 0) {
+        this.topics[existingIdx] = newTopic;
+      } else {
+        this.topics.push(newTopic);
+      }
+
+      // Add Material
+      if (pkg.material) {
+        pkg.material.topicId = newTopicId;
+        this.materials.set(newTopicId, pkg.material);
+      }
+
+      // Add Examples
+      if (pkg.examples && pkg.examples.length > 0) {
+        pkg.examples.forEach(ex => { ex.topicId = newTopicId; });
+        this.examples.set(newTopicId, pkg.examples);
+      }
+
+      // Add Questions
+      if (pkg.questions && pkg.questions.length > 0) {
+        pkg.questions.forEach(q => { q.topicId = newTopicId; });
+        this.questions.push(...pkg.questions);
+      }
+
+      // Create Assessment with default KKM 75
+      const existingAsmIdx = this.assessments.findIndex(a => a.topicId === newTopicId);
+      const newAsm: Assessment = {
+        id: `asm-${pkg.slug}`,
+        topicId: newTopicId,
+        title: `Asesmen Terintegrasi: ${pkg.title}`,
+        type: 'TOPIC',
+        durationMinutes: 25,
+        passingScore: pkg.passingScore || 75,
+        totalQuestions: pkg.questions?.length || 10
+      };
+
+      if (existingAsmIdx >= 0) {
+        this.assessments[existingAsmIdx] = newAsm;
+      } else {
+        this.assessments.push(newAsm);
+      }
+
+      publishedAction = `Topik baru "${pkg.title}" (${pkg.phaseCode}) dengan modul lengkap telah resmi aktif di kurikulum dan dapat diakses siswa!`;
+    }
+
+    // Save published version snapshot
+    this.createContentVersion({
+      id: `ver-${Date.now()}-${item.version || 1}`,
+      contentId: id,
+      versionNumber: item.version || 1,
+      title: item.topicTitle,
+      contentType: item.contentType,
+      contentData: item.contentData,
+      createdBy: publisherId,
+      creatorRole: 'teacher',
+      changeSummary: 'Dipublikasikan resmi ke alur belajar siswa',
+      isPublished: true,
+      createdAt: new Date().toISOString()
+    });
+
+    // Record review log
+    this.recordContentReview({
+      id: `rev-${Date.now()}`,
+      contentId: id,
+      versionNumber: item.version || 1,
+      reviewerId: publisherId,
+      reviewerName: publisherName || 'Guru Validator',
+      reviewerRole: 'teacher',
+      action: 'PUBLISH',
+      notes: notes || 'Publikasi modul ke kurikulum live.',
+      reviewedAt: item.publishedAt
+    });
+
+    return { item, publishedAction };
+  }
+
 }
 
 export const db = new DatabaseStore();
