@@ -5,7 +5,6 @@
 
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { db } from './server/store';
 import {
   askAiTutor,
@@ -23,6 +22,17 @@ import { AiGeneratedItem, AiGenerationJob } from './src/types';
 
 export function createApp() {
   const app = express();
+
+  // CORS and pre-flight handling
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-user-id');
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  });
 
   app.use(express.json());
 
@@ -978,6 +988,7 @@ async function startServer() {
   // VITE MIDDLEWARE & STATIC SERVING
   // ==========================================
   if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa'
