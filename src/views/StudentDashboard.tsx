@@ -23,6 +23,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ onNavigate }
   const { user, authFetch } = useAuth();
   const [learningPath, setLearningPath] = useState<any[]>([]);
   const [phases, setPhases] = useState<Phase[]>([]);
+  const [selectedPhaseFilter, setSelectedPhaseFilter] = useState<string>('ALL');
   const [progressData, setProgressData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -237,13 +238,56 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ onNavigate }
           </div>
         </div>
 
+        {/* Phase Filter Tabs (Fase A - Fase F) */}
+        <div className="flex flex-wrap gap-1.5 mb-6 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200">
+          <button
+            onClick={() => setSelectedPhaseFilter('ALL')}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              selectedPhaseFilter === 'ALL'
+                ? 'bg-white text-indigo-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Semua Fase (A - F)
+          </button>
+          {[
+            { id: 'phase-a', label: 'Fase A (SD 1-2)' },
+            { id: 'phase-b', label: 'Fase B (SD 3-4)' },
+            { id: 'phase-c', label: 'Fase C (SD 5-6)' },
+            { id: 'phase-d', label: 'Fase D (SMP 7-9)' },
+            { id: 'phase-e', label: 'Fase E (SMA 10)' },
+            { id: 'phase-f', label: 'Fase F (SMA 11-12)' }
+          ].map(p => (
+            <button
+              key={p.id}
+              onClick={() => setSelectedPhaseFilter(p.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                selectedPhaseFilter === p.id
+                  ? 'bg-white text-indigo-700 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
+
         {/* Roadmap Nodes */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {learningPath.map((topic, index) => {
+          {learningPath
+            .filter(topic => selectedPhaseFilter === 'ALL' || topic.phaseId === selectedPhaseFilter)
+            .map((topic, index) => {
             const isMastered = topic.status === 'MASTERED';
             const isAvailable = topic.status === 'AVAILABLE' || topic.status === 'IN_PROGRESS';
             const isRemedial = topic.status === 'NEEDS_REMEDIAL';
             const isLocked = topic.status === 'LOCKED';
+            const phaseBadge = topic.phaseId === 'phase-a' ? 'Fase A'
+              : topic.phaseId === 'phase-b' ? 'Fase B'
+              : topic.phaseId === 'phase-c' ? 'Fase C'
+              : topic.phaseId === 'phase-d' ? 'Fase D'
+              : topic.phaseId === 'phase-e' ? 'Fase E'
+              : topic.phaseId === 'phase-f' ? 'Fase F'
+              : 'Adaptif';
 
             return (
               <div
@@ -263,9 +307,14 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ onNavigate }
               >
                 {/* Header: Node number & Status Icon */}
                 <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                    Topik #{index + 1}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      #{index + 1}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100">
+                      {phaseBadge}
+                    </span>
+                  </div>
                   <div>
                     {isMastered && (
                       <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
