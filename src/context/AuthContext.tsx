@@ -32,9 +32,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     try {
       const res = await fetch(url, { ...options, headers });
-      if (res.ok) {
+      const contentType = res.headers.get('content-type') || '';
+      // If response is OK and is valid JSON, return it
+      if (res.ok && contentType.includes('application/json')) {
         return res;
       }
+      // If server returned HTML (e.g. Vercel SPA rewrite fallback) or an error, fallback immediately
       return await fallbackAuthFetch(url, options, user);
     } catch {
       return await fallbackAuthFetch(url, options, user);
