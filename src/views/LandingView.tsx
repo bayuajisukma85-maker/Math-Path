@@ -43,7 +43,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onNavigate }) => {
           <div className="max-w-3xl space-y-6 relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-sky-200">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>MathPath • Kurikulum Merdeka Matematika Fase A s.d. Fase F</span>
+              <span>MathPath</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
