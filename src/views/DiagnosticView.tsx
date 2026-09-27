@@ -15,6 +15,7 @@ import { Question, DiagnosticResult } from '../types';
 import { MathRenderer } from '../components/MathRenderer';
 import { DIAGNOSTIC_QUESTIONS_30 } from '../../server/diagnosticData';
 import { db } from '../../server/store';
+import { supabaseService } from '../services/supabaseService';
 
 interface DiagnosticViewProps {
   onNavigate: (view: string, param?: any) => void;
@@ -90,6 +91,7 @@ export const DiagnosticView: React.FC<DiagnosticViewProps> = ({ onNavigate }) =>
           const data = await res.json();
           if (data.result) {
             setResult(data.result);
+            supabaseService.saveDiagnosticResult(user?.id || 'user-student-1', data.result);
             setStage('RESULT');
             return;
           }
@@ -100,12 +102,14 @@ export const DiagnosticView: React.FC<DiagnosticViewProps> = ({ onNavigate }) =>
       const currentUserId = user?.id || 'user-student-1';
       const evaluated = db.evaluateDiagnostic(currentUserId, answersPayload);
       setResult(evaluated);
+      supabaseService.saveDiagnosticResult(currentUserId, evaluated);
       setStage('RESULT');
     } catch (err) {
       console.warn('Evaluation error, using local fallback:', err);
       const currentUserId = user?.id || 'user-student-1';
       const evaluated = db.evaluateDiagnostic(currentUserId, answersPayload);
       setResult(evaluated);
+      supabaseService.saveDiagnosticResult(currentUserId, evaluated);
       setStage('RESULT');
     } finally {
       setIsLoading(false);
