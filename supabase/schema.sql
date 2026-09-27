@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 -- 2. PHASES (Fase A - Fase F)
 CREATE TABLE IF NOT EXISTS public.phases (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code TEXT NOT NULL UNIQUE, -- 'FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F'
     name TEXT NOT NULL,         -- 'Fase A (Kelas 1-2 SD)'
     description TEXT,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS public.phases (
 
 -- 3. LEVELS
 CREATE TABLE IF NOT EXISTS public.levels (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     phase_id UUID NOT NULL REFERENCES public.phases(id) ON DELETE CASCADE,
     name TEXT NOT NULL,         -- 'Level 1: Bilangan & Operasi Aritmatika'
     grade_equivalent TEXT,      -- 'Kelas 7'
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS public.levels (
 
 -- 4. TOPICS
 CREATE TABLE IF NOT EXISTS public.topics (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     level_id UUID NOT NULL REFERENCES public.levels(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS public.topics (
 
 -- 5. SUBTOPICS
 CREATE TABLE IF NOT EXISTS public.subtopics (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT,
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS public.subtopics (
 
 -- 6. PREREQUISITES (Topic A requires Prerequisite Topic B)
 CREATE TABLE IF NOT EXISTS public.prerequisites (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     prerequisite_topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     is_mandatory BOOLEAN NOT NULL DEFAULT TRUE,
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS public.prerequisites (
 
 -- 7. LEARNING MATERIALS
 CREATE TABLE IF NOT EXISTS public.learning_materials (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     learning_objectives TEXT[] NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS public.learning_materials (
 
 -- 8. EXAMPLES (Step-by-step)
 CREATE TABLE IF NOT EXISTS public.examples (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     problem_statement TEXT NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS public.examples (
 
 -- 9. QUESTIONS BANK
 CREATE TABLE IF NOT EXISTS public.questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
     question_type TEXT NOT NULL CHECK (question_type IN ('multiple_choice', 'multiple_response', 'true_false', 'short_answer', 'numerical')),
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS public.questions (
 
 -- 10. ASSESSMENTS
 CREATE TABLE IF NOT EXISTS public.assessments (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     type TEXT NOT NULL CHECK (type IN ('DIAGNOSTIC', 'TOPIC', 'PREREQUISITE', 'REMEDIAL')),
@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS public.assessments (
 
 -- 11. ASSESSMENT QUESTIONS
 CREATE TABLE IF NOT EXISTS public.assessment_questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assessment_id UUID NOT NULL REFERENCES public.assessments(id) ON DELETE CASCADE,
     question_id UUID NOT NULL REFERENCES public.questions(id) ON DELETE CASCADE,
     order_index INT NOT NULL DEFAULT 1,
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS public.assessment_questions (
 
 -- 12. ASSESSMENT ATTEMPTS
 CREATE TABLE IF NOT EXISTS public.assessment_attempts (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     assessment_id UUID NOT NULL REFERENCES public.assessments(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     topic_id UUID REFERENCES public.topics(id) ON DELETE SET NULL,
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS public.assessment_attempts (
 
 -- 13. ASSESSMENT ANSWERS
 CREATE TABLE IF NOT EXISTS public.assessment_answers (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     attempt_id UUID NOT NULL REFERENCES public.assessment_attempts(id) ON DELETE CASCADE,
     question_id UUID NOT NULL REFERENCES public.questions(id) ON DELETE CASCADE,
     user_answer JSONB,
@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS public.assessment_answers (
 
 -- 14. STUDENT PROGRESS
 CREATE TABLE IF NOT EXISTS public.student_progress (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     status TEXT NOT NULL CHECK (status IN ('LOCKED', 'AVAILABLE', 'IN_PROGRESS', 'NEEDS_REMEDIAL', 'MASTERED')) DEFAULT 'LOCKED',
@@ -179,7 +179,7 @@ CREATE TABLE IF NOT EXISTS public.student_progress (
 
 -- 15. STUDENT MASTERY
 CREATE TABLE IF NOT EXISTS public.student_mastery (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     mastery_score NUMERIC(5,2) NOT NULL DEFAULT 0.00,
@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS public.student_mastery (
 
 -- 16. LEARNING HISTORY
 CREATE TABLE IF NOT EXISTS public.learning_history (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     topic_id UUID REFERENCES public.topics(id) ON DELETE SET NULL,
     activity_type TEXT NOT NULL CHECK (activity_type IN ('MATERIAL_VIEW', 'PRACTICE', 'ASSESSMENT', 'REMEDIAL', 'PREREQUISITE', 'DIAGNOSTIC')),
@@ -205,7 +205,7 @@ CREATE TABLE IF NOT EXISTS public.learning_history (
 
 -- 17. DIAGNOSTIC RESULTS
 CREATE TABLE IF NOT EXISTS public.diagnostic_results (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     recommended_phase_id UUID REFERENCES public.phases(id),
     recommended_level_id UUID REFERENCES public.levels(id),
@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS public.diagnostic_results (
 
 -- 18. REMEDIAL PATHS
 CREATE TABLE IF NOT EXISTS public.remedial_paths (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     origin_topic_id UUID NOT NULL REFERENCES public.topics(id) ON DELETE CASCADE,
     failed_attempt_id UUID REFERENCES public.assessment_attempts(id) ON DELETE SET NULL,
@@ -231,7 +231,7 @@ CREATE TABLE IF NOT EXISTS public.remedial_paths (
 
 -- 19. AI TUTOR SESSIONS
 CREATE TABLE IF NOT EXISTS public.ai_tutor_sessions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     topic_id UUID REFERENCES public.topics(id) ON DELETE SET NULL,
     messages JSONB NOT NULL DEFAULT '[]'::jsonb,
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS public.ai_tutor_sessions (
 
 -- 20. ASSESSMENT SECURITY EVENTS (Non-punitive flag logging)
 CREATE TABLE IF NOT EXISTS public.assessment_security_events (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     attempt_id UUID NOT NULL REFERENCES public.assessment_attempts(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     event_type TEXT NOT NULL CHECK (event_type IN (
@@ -350,7 +350,7 @@ CREATE POLICY "Teacher review security events" ON public.assessment_security_eve
 -- 21. AI GENERATED CONTENT & REVIEW QUEUE (ADDITIVE)
 -- ===================================================================
 CREATE TABLE IF NOT EXISTS public.ai_generated_content (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_type TEXT NOT NULL CHECK (content_type IN ('MATERIAL', 'EXAMPLES', 'QUESTIONS', 'TOPIC_PACKAGE', 'CURRICULUM_PLAN')),
     topic_id UUID REFERENCES public.topics(id) ON DELETE SET NULL,
     topic_title TEXT NOT NULL,
@@ -381,7 +381,7 @@ CREATE POLICY "Students read approved materials from AI content" ON public.ai_ge
 
 -- 22. CURRICULUM SOURCES (Dokumen/Input Kurikulum Guru & Admin)
 CREATE TABLE IF NOT EXISTS public.curriculum_sources (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
     subject TEXT NOT NULL DEFAULT 'Matematika',
@@ -401,7 +401,7 @@ CREATE POLICY "Public read curriculum sources" ON public.curriculum_sources FOR 
 
 -- 23. COMPETENCIES
 CREATE TABLE IF NOT EXISTS public.competencies (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code TEXT NOT NULL UNIQUE,
     element TEXT NOT NULL, -- Bilangan, Aljabar, Pengukuran, Geometri, Analisis Data dan Peluang, Kalkulus
     title TEXT NOT NULL,
@@ -418,7 +418,7 @@ CREATE POLICY "Admin manage competencies" ON public.competencies FOR ALL USING (
 
 -- 24. CURRICULUM UNITS (Fase, Elemen, CP, TP, ATP, Topik, Prasyarat)
 CREATE TABLE IF NOT EXISTS public.curriculum_units (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     source_id UUID REFERENCES public.curriculum_sources(id) ON DELETE SET NULL,
     phase_code TEXT NOT NULL CHECK (phase_code IN ('FASE_A', 'FASE_B', 'FASE_C', 'FASE_D', 'FASE_E', 'FASE_F')),
     element TEXT NOT NULL,
@@ -440,7 +440,7 @@ CREATE POLICY "Teachers and admin manage curriculum units" ON public.curriculum_
 
 -- 25. PRACTICE QUESTIONS (Latihan bertingkat LOTS, MOTS, HOTS)
 CREATE TABLE IF NOT EXISTS public.practice_questions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     topic_id UUID REFERENCES public.topics(id) ON DELETE CASCADE,
     subtopic_id UUID REFERENCES public.subtopics(id) ON DELETE SET NULL,
     competency_id UUID REFERENCES public.competencies(id) ON DELETE SET NULL,
@@ -461,7 +461,7 @@ CREATE POLICY "Teachers and admin manage practice questions" ON public.practice_
 
 -- 26. AI GENERATION JOBS (Proses generator asinkron & progress tracking)
 CREATE TABLE IF NOT EXISTS public.ai_generation_jobs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     job_type TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('PENDING', 'PROCESSING', 'COMPLETED', 'FAILED')) DEFAULT 'PENDING',
     progress_percent INT NOT NULL DEFAULT 0,
@@ -480,7 +480,7 @@ CREATE POLICY "Teachers and admin manage generation jobs" ON public.ai_generatio
 
 -- 27. CONTENT REVIEWS (Audit trail persetujuan konten)
 CREATE TABLE IF NOT EXISTS public.content_reviews (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_id UUID NOT NULL REFERENCES public.ai_generated_content(id) ON DELETE CASCADE,
     version_number INT NOT NULL DEFAULT 1,
     reviewer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
@@ -497,7 +497,7 @@ CREATE POLICY "Teachers and admin manage reviews" ON public.content_reviews FOR 
 
 -- 28. CONTENT VERSIONS (Versioning: v1, v2, v3 agar perubahan published terkontrol)
 CREATE TABLE IF NOT EXISTS public.content_versions (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content_id UUID NOT NULL REFERENCES public.ai_generated_content(id) ON DELETE CASCADE,
     version_number INT NOT NULL DEFAULT 1,
     title TEXT NOT NULL,
